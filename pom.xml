@@ -25,9 +25,9 @@
 	</developers>
 
 	<scm>
-		<connection>scm:git:ssh://dev.in2experience.com/git/invex</connection>
-		<developerConnection>scm:git:ssh://dev.in2experience.com/git/invex</developerConnection>
-		<url>https://www.in2experience.com/invex/rom</url>
+		<connection>scm:git:https://github.com/shadowdz/maven-dart-plugin.git</connection>
+		<developerConnection>scm:git:https://github.com/shadowdz/maven-dart-plugin.git</developerConnection>
+		<url>https://github.com/shadowdz/maven-dart-plugin</url>
 	</scm>
 
 	<licenses>
