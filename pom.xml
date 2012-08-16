@@ -38,6 +38,21 @@
 		</license>
 	</licenses>
 
+	<distributionManagement>
+		<repository>
+			<id>in2ex-releases</id>
+			<name>In2Experience Repository</name>
+			<url>http://dev.in2experience.com/nexus/content/repositories/releases/</url>
+			<uniqueVersion>true</uniqueVersion>
+		</repository>
+		<snapshotRepository>
+			<id>in2ex-snapshots</id>
+			<name>In2Experience Snapshot Repository</name>
+			<url>http://dev.in2experience.com/nexus/content/repositories/snapshots/</url>
+			<uniqueVersion>true</uniqueVersion>
+		</snapshotRepository>
+	</distributionManagement>
+
 	<properties>
 		<mavenVersion>3.0.4</mavenVersion>
 		<mavenPluginPluginVersion>3.1</mavenPluginPluginVersion>
