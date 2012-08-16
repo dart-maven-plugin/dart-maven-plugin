@@ -42,7 +42,7 @@
 		<repository>
 			<id>in2ex-releases</id>
 			<name>In2Experience Repository</name>
-			<url>http://dev.in2experience.com/nexus/content/repositories/releases/</url>
+			<url>https://dev.in2experience.com/nexus/content/repositories/public-release/</url>
 			<uniqueVersion>true</uniqueVersion>
 		</repository>
 		<snapshotRepository>
