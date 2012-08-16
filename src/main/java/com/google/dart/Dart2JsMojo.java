@@ -46,7 +46,7 @@ import org.codehaus.plexus.util.cli.WriterStreamConsumer;
 import com.google.dart.util.DartVmUtil;
 
 /**
- * Goal which touches a timestamp file.
+ * Goal which compile dart files to javascript.
  * 
  */
 @Mojo(name = "dart2js", defaultPhase = LifecyclePhase.COMPILE)
@@ -77,7 +77,7 @@ public class Dart2JsMojo
 	private boolean					skip;
 
 	/**
-	 * The directory to place the js files after compilinf.
+	 * The directory to place the js files after compiling.
 	 * 
 	 * @since 1.0
 	 */
