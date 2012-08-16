@@ -304,13 +304,17 @@ public class Dart2JsMojo
 		for (final File dartSourceFile : staleDartSources) {
 			try {
 				final List<String> compilerArguments = new ArrayList<String>(arguments);
-				createOutputFileArgument(compilerArguments, dartSourceFile);
+				final File dartOutputFile = createOutputFileArgument(compilerArguments, dartSourceFile);
 				createDartfileArgument(compilerArguments, dartSourceFile);
 
 				cl.clearArgs();
 				cl.addArguments(compilerArguments.toArray(EMPTY_STRING_ARRAY));
 
 				getLog().debug(cl.toString());
+				if (!dartOutputFile.getParentFile().exists()) {
+					getLog().debug("Create directory " + dartOutputFile.getParentFile().getAbsolutePath());
+					dartOutputFile.getParentFile().mkdirs();
+				}
 				final int returnValue = CommandLineUtils.executeCommandLine(cl, output, error);
 				getLog().debug("dart2js returncode: " + returnValue);
 			} catch (final CommandLineException e) {
@@ -342,29 +346,29 @@ public class Dart2JsMojo
 		getLog().debug("dartfile to compile: " + dartSourceFileAbsolutePath);
 	}
 
-	private void createOutputFileArgument(final List<String> compilerArguments, final File dartSourceFile) {
+	private File createOutputFileArgument(final List<String> compilerArguments, final File dartSourceFile) {
 		final String dartSourceFileAbsolutePath = dartSourceFile.getAbsolutePath();
 		final String baseDirAbsolutePath = basedir.getAbsolutePath();
-		final String dartSourceDirectoryRelativeToBasedir = dartSourceFileAbsolutePath.replace(baseDirAbsolutePath,
+		final String dartSourceFileRelativeToBasedir = dartSourceFileAbsolutePath.replace(baseDirAbsolutePath,
 				"").replace(".dart", ".js");
 
-		String dartOutputDirectoryRelativeToBasedir = null;
+		String dartOutputFileRelativeToBasedir = null;
 		for (final String compileSourceRoot : compileSourceRoots) {
 			final String compileSourceRootRelativeToBasedir = compileSourceRoot.replace(baseDirAbsolutePath, "");
-			if (dartSourceDirectoryRelativeToBasedir.startsWith(compileSourceRootRelativeToBasedir)) {
-				dartOutputDirectoryRelativeToBasedir = dartSourceDirectoryRelativeToBasedir.replace(
+			if (dartSourceFileRelativeToBasedir.startsWith(compileSourceRootRelativeToBasedir)) {
+				dartOutputFileRelativeToBasedir = dartSourceFileRelativeToBasedir.replace(
 						compileSourceRootRelativeToBasedir, "");
 				break;
 			}
 		}
 
-		final String dartOutputDirectory = outputDirectory.getAbsolutePath() + dartOutputDirectoryRelativeToBasedir;
+		final String dartOutputFile = outputDirectory.getAbsolutePath() + dartOutputFileRelativeToBasedir;
 
 		getLog().debug(
 				"dart2js compiles dart-file '" + dartSourceFileAbsolutePath + "' to outputdirectory '"
-						+ dartOutputDirectory + "'");
-		compilerArguments.add(ARGUMENT_OUTPUT_FILE + dartOutputDirectory);
-
+						+ dartOutputFile + "'");
+		compilerArguments.add(ARGUMENT_OUTPUT_FILE + dartOutputFile);
+		return new File(dartOutputFile);
 	}
 
 	private Set<File> computeStaleSources(final SourceInclusionScanner scanner)
