@@ -64,9 +64,12 @@ public class DartVmUtil {
 
 	private final ArchiverManager	archiverManager;
 
+	private final boolean			skipVM;
+
 	public DartVmUtil(final File executable, final File dartOutputDirectory, final String dartVersion,
 			final String dartServerUrl, final Settings settings, final Log logger,
-			final String serverId, final WagonManager wagonManager, final ArchiverManager archiverManager) {
+			final String serverId, final WagonManager wagonManager, final ArchiverManager archiverManager,
+			final boolean skipVM) {
 		super();
 		this.executable = executable;
 		this.dartOutputDirectory = dartOutputDirectory;
@@ -77,6 +80,7 @@ public class DartVmUtil {
 		this.serverId = serverId;
 		this.wagonManager = wagonManager;
 		this.archiverManager = archiverManager;
+		this.skipVM = skipVM;
 	}
 
 	public String generateExecFilePath()
@@ -108,16 +112,20 @@ public class DartVmUtil {
 			NoSuchArchiverException {
 		final File dartVersionFile = new File(dartOutputDirectory, "VERSION");
 		if (dartVersionFile.exists()) {
-			final JSONObject dartVersionInformation = readDartVersionJson(dartVersionFile);
-			if (dartVersion.equals("latest")) {
-				final Date dartVersionDatePresent = readDartVersionDate(dartVersionInformation);
-				if (checkLatestVersion(dartVersionDatePresent)) {
-					downloadDart();
-				}
-			} else {
-				final long dartVersionPresent = readDartVersion(dartVersionInformation);
-				if (dartVersionPresent != Long.parseLong(dartVersion)) {
-					downloadDart();
+
+			if (!skipVM) {
+
+				final JSONObject dartVersionInformation = readDartVersionJson(dartVersionFile);
+				if (dartVersion.equals("latest")) {
+					final Date dartVersionDatePresent = readDartVersionDate(dartVersionInformation);
+					if (checkLatestVersion(dartVersionDatePresent)) {
+						downloadDart();
+					}
+				} else {
+					final long dartVersionPresent = readDartVersion(dartVersionInformation);
+					if (dartVersionPresent != Long.parseLong(dartVersion)) {
+						downloadDart();
+					}
 				}
 			}
 		} else {
@@ -132,6 +140,7 @@ public class DartVmUtil {
 
 	private void downloadDart() throws WagonConfigurationException, UnsupportedProtocolException, WagonException,
 			MojoExecutionException, NoSuchArchiverException {
+
 		String dartSDKFileName = "dartsdk-";
 		if (OsUtil.isWindows()) {
 			dartSDKFileName = "win32";

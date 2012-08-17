@@ -38,6 +38,8 @@ More configuration details:
     ** `serverId` settings.xml's server id for the URL. This is used when wagon needs extra authentication information.
 
     ** `skip (Default: false)` Skip the execution of dart2js.
+    
+    ** `skipVM (Default: false)` Skip downloading dart VM.
 
     ** `staleMillis (Default: 0)` Sets the granularity in milliseconds of the last modification date for testing whether a dart source needs recompilation.
     

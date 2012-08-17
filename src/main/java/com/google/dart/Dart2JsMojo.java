@@ -77,6 +77,14 @@ public class Dart2JsMojo
 	private boolean					skip;
 
 	/**
+	 * Skip downloading dart VM.
+	 * 
+	 * @since 1.0
+	 */
+	@Parameter(defaultValue = "false", property = "dart.skipVM")
+	private boolean					skipVM;
+
+	/**
 	 * The directory to place the js files after compiling.
 	 * 
 	 * @since 1.0
@@ -89,7 +97,7 @@ public class Dart2JsMojo
 	 * 
 	 * @since 1.0
 	 */
-	@Parameter(defaultValue = "**/*")
+	@Parameter(defaultValue = "**/*.dart")
 	private final Set<String>		includes				= new HashSet<String>();
 
 	/**
@@ -235,7 +243,7 @@ public class Dart2JsMojo
 		try {
 			compilerPath = new DartVmUtil(executable, dartOutputDirectory, dartVersion, dartServerUrl, settings,
 					getLog(),
-					serverId, wagonManager, archiverManager)
+					serverId, wagonManager, archiverManager, skipVM)
 					.generateExecFilePath();
 		} catch (final Exception e) {
 			throw new MojoExecutionException("Unable to download dart vm", e);
@@ -374,7 +382,7 @@ public class Dart2JsMojo
 	private Set<File> computeStaleSources(final SourceInclusionScanner scanner)
 			throws MojoExecutionException
 	{
-		final SourceMapping mapping = new SuffixMapping("dart", "js");
+		final SourceMapping mapping = new SuffixMapping("dart", "dart.js");
 		final File outputDirectory = getOutputDirectory();
 
 		scanner.addSourceMapping(mapping);
@@ -415,7 +423,7 @@ public class Dart2JsMojo
 		{
 			if (includes.isEmpty())
 			{
-				includes.add("**/*.java");
+				includes.add("**/*.dart");
 			}
 			scanner = new StaleSourceScanner(staleMillis, includes, excludes);
 		}
