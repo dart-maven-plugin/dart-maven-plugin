@@ -350,7 +350,7 @@ public class Dart2JsMojo
 		final String dartSourceFileAbsolutePath = dartSourceFile.getAbsolutePath();
 		final String baseDirAbsolutePath = basedir.getAbsolutePath();
 		final String dartSourceFileRelativeToBasedir = dartSourceFileAbsolutePath.replace(baseDirAbsolutePath,
-				"").replace(".dart", ".js");
+				"") + ".js";
 
 		String dartOutputFileRelativeToBasedir = null;
 		for (final String compileSourceRoot : compileSourceRoots) {
