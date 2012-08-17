@@ -25,9 +25,9 @@
 	</developers>
 
 	<scm>
-		<connection>scm:git:https://github.com/shadowdz/dart-maven-plugin.git</connection>
-		<developerConnection>scm:git:https://github.com/shadowdz/dart-maven-plugin.git</developerConnection>
-		<url>https://github.com/shadowdz/dart-maven-plugin</url>
+		<connection>scm:git:https://github.com/dzwicker/dart-maven-plugin.git</connection>
+		<developerConnection>scm:git:https://github.com/dzwicker/dart-maven-plugin.git</developerConnection>
+		<url>https://github.com/dzwicker/dart-maven-plugin</url>
 	</scm>
 
 	<licenses>

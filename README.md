@@ -39,4 +39,4 @@ An example can be found in the example folder in the git repository.
 The Dart Maven Plugin is provided in the In2Experience repository https://dev.in2experience.com/nexus/content/repositories/public-release/
 
 ## Authors and Contributors
-Daniel Zwicker (@shadowdz) founded the project on GitHub.
+Daniel Zwicker (@dzwicker) founded the project on GitHub.
