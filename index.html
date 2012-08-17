@@ -4,70 +4,105 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="chrome=1">
     <title>Dart-maven-plugin by shadowdz</title>
+
     <link rel="stylesheet" href="stylesheets/styles.css">
     <link rel="stylesheet" href="stylesheets/pygment_trac.css">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
-    <script src="javascripts/respond.js"></script>
-    <!--[if lt IE 9]>
-      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
-    <![endif]-->
-    <!--[if lt IE 8]>
-    <link rel="stylesheet" href="stylesheets/ie.css">
-    <![endif]-->
     <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
-
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
   </head>
   <body>
-      <div id="header">
-        <nav>
-          <li class="fork"><a href="https://github.com/shadowdz/dart-maven-plugin">View On GitHub</a></li>
-          <li class="downloads"><a href="https://github.com/shadowdz/dart-maven-plugin/zipball/master">ZIP</a></li>
-          <li class="downloads"><a href="https://github.com/shadowdz/dart-maven-plugin/tarball/master">TAR</a></li>
-          <li class="title">DOWNLOADS</li>
-        </nav>
-      </div><!-- end header -->
-
     <div class="wrapper">
+      <header>
+        <h1>Dart-maven-plugin</h1>
+        <p>Maven plugin for building google dart projects</p>
 
+        <p class="view"><a href="https://github.com/shadowdz/dart-maven-plugin">View the Project on GitHub <small>shadowdz/dart-maven-plugin</small></a></p>
+
+
+        <ul>
+          <li><a href="https://github.com/shadowdz/dart-maven-plugin/zipball/master">Download <strong>ZIP File</strong></a></li>
+          <li><a href="https://github.com/shadowdz/dart-maven-plugin/tarball/master">Download <strong>TAR Ball</strong></a></li>
+          <li><a href="https://github.com/shadowdz/dart-maven-plugin">View On <strong>GitHub</strong></a></li>
+        </ul>
+      </header>
       <section>
-        <div id="title">
-          <h1>Dart-maven-plugin</h1>
-          <p>Maven plugin for building google dart projects</p>
-          <hr>
-          <span class="credits left">Project maintained by <a href="https://github.com/shadowdz">shadowdz</a></span>
-          <span class="credits right">Hosted on GitHub Pages &mdash; Theme by <a href="http://twitter.com/#!/michigangraham">mattgraham</a></span>
-        </div>
+        <h1>Maven Dart Plugin</h1>
 
-        <h3>Welcome to GitHub Pages.</h3>
+<p>The Dart Maven Plugin provides integration of Dart into a maven build process.</p>
 
-<p>This automatic page generator is the easiest way to create beautiful pages for all of your projects. Author your page content here using GitHub Flavored Markdown, select a template crafted by a designer, and publish. After your page is generated, you can check out the new branch:</p>
+<h2>Goals Overview</h2>
 
-<pre><code>$ cd your_repo_root/repo_name
-$ git fetch origin
-$ git checkout gh-pages
-</code></pre>
+<p>The Dart Plugin has one goal (besides the help goal). It is already bound to his proper phase within the Maven Lifecycle (compile) and is therefore, automatically executed during his respective phase.</p>
 
-<p>If you're using the GitHub for Mac, simply sync your repository and you'll see the new branch.</p>
+<ul>
+<li>
+<code>dart:dart2js</code> Goal which compile dart files to javascript.</li>
+<li>
+<code>dart:help</code>  Display help information on maven-dart-plugin. Call mvn dart:help -Ddetail=true -Dgoal= to display parameter details.</li>
+</ul><h2>Usage</h2>
 
-<h3>Designer Templates</h3>
+<p>The dart2js goal uses the dart2js compiler from the dart project to compile any dart file to javascript (js file) and a map.js file. It will download the latest dart SDK into the dartOutputDirectory [${project.build.directory}/dependency/dart] for the used OS and architecture. By default it will look for dart files in src/main/dart and will place the javascript files under ${project.build.directory}/dart.</p>
 
-<p>We've crafted some handsome templates for you to use. Go ahead and continue to layouts to browse through them. You can easily go back to edit your page before publishing. After publishing your page, you can revisit the page generator and switch to another theme. Your Page content will be preserved if it remained markdown format.</p>
+<p>More configuration details:</p>
 
-<h3>Rather Drive Stick?</h3>
+<h3>
+<code>dart:dart2js</code> Goal which compile dart files to javascript.</h3>
 
-<p>If you prefer to not use the automatic generator, push a branch named <code>gh-pages</code> to your repository to create a page manually. In addition to supporting regular HTML content, GitHub Pages support Jekyll, a simple, blog aware static site generator written by our own Tom Preston-Werner. Jekyll makes it easy to create site-wide headers and footers without having to copy them across every page. It also offers intelligent blog support and other advanced templating features.</p>
+<ul>
+<li>
+<code>checkedMode (Default: false)</code> Insert runtime type checks and enable assertions (checked mode).</li>
+<li>
+<code>dartOutputDirectory</code> The directory for downloading the dart SDK.</li>
+<li>
+<code>dartServerUrl</code> The base URL for Downloading the dart SDK from</li>
+<li>
+<code>dartVersion</code>  The Version of the dart SDK</li>
+<li>
+<code>excludes</code> A list of exclusion filters for the dart2js compiler.</li>
+<li>
+<code>executable</code> provide a dart2js executable</li>
+<li>
+<code>includes</code> A list of inclusion filters for the dart2js compiler.</li>
+<li>
+<code>outputDirectory</code> The directory to place the js files after compiling.</li>
+<li>
+<code>serverId</code> settings.xml's server id for the URL. This is used when wagon needs extra authentication information.</li>
+<li>
+<code>skip (Default: false)</code> Skip the execution of dart2js.</li>
+<li>
+<code>skipVM (Default: false)</code> Skip downloading dart VM.</li>
+<li>
+<code>staleMillis (Default: 0)</code> Sets the granularity in milliseconds of the last modification date for testing whether a dart source needs recompilation.</li>
+</ul><h2>Example</h2>
 
-<h3>Authors and Contributors</h3>
+<p>An example can be found in the example folder in the git repository.</p>
 
-<p>You can <a href="https://github.com/blog/821" class="user-mention">@mention</a> a GitHub username to generate a link to their profile. The resulting <code>&lt;a&gt;</code> element will link to the contributor's GitHub Profile. For example: In 2007, Chris Wanstrath (<a href="https://github.com/defunkt" class="user-mention">@defunkt</a>), PJ Hyett (<a href="https://github.com/pjhyett" class="user-mention">@pjhyett</a>), and Tom Preston-Werner (<a href="https://github.com/mojombo" class="user-mention">@mojombo</a>) founded GitHub.</p>
+<h2>Maven repository</h2>
 
-<h3>Support or Contact</h3>
+<p>The Dart Maven Plugin is provided in the In2Experience repository <a href="https://dev.in2experience.com/nexus/content/repositories/public-release/">https://dev.in2experience.com/nexus/content/repositories/public-release/</a></p>
 
-<p>Having trouble with Pages? Check out the documentation at <a href="http://help.github.com/pages">http://help.github.com/pages</a> or contact <a href="mailto:support@github.com">support@github.com</a> and we’ll help you sort it out.</p>
+<h2>Authors and Contributors</h2>
+
+<p>Daniel Zwicker (<a href="https://github.com/shadowdz" class="user-mention">@shadowdz</a>) founded the project on GitHub.</p>
       </section>
-
+      <footer>
+        <p>This project is maintained by <a href="https://github.com/shadowdz">shadowdz</a></p>
+        <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></small></p>
+      </footer>
     </div>
-    <!--[if !IE]><script>fixScale(document);</script><![endif]-->
-    
+    <script src="javascripts/scale.fix.js"></script>
+              <script type="text/javascript">
+            var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+            document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+          </script>
+          <script type="text/javascript">
+            try {
+              var pageTracker = _gat._getTracker("UA-34172562-1");
+            pageTracker._trackPageview();
+            } catch(err) {}
+          </script>
+
   </body>
 </html>
