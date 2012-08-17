@@ -15,33 +15,31 @@ The dart2js goal uses the dart2js compiler from the dart project to compile any 
 
 More configuration details:
 
-* `dart:dart2js` Goal which compile dart files to javascript. 
+### `dart:dart2js` Goal which compile dart files to javascript. 
 
-	Available parameters:
+    * `checkedMode (Default: false)` Insert runtime type checks and enable assertions (checked mode).
 
-    ** `checkedMode (Default: false)` Insert runtime type checks and enable assertions (checked mode).
+    * `dartOutputDirectory` The directory for downloading the dart SDK.
 
-    ** `dartOutputDirectory` The directory for downloading the dart SDK.
+    * `dartServerUrl` The base URL for Downloading the dart SDK from
 
-    ** `dartServerUrl` The base URL for Downloading the dart SDK from
+    * `dartVersion`  The Version of the dart SDK
 
-    ** `dartVersion`  The Version of the dart SDK
+    * `excludes` A list of exclusion filters for the dart2js compiler.
 
-    ** `excludes` A list of exclusion filters for the dart2js compiler.
+    * `executable` provide a dart2js executable
 
-    ** `executable` provide a dart2js executable
+    * `includes` A list of inclusion filters for the dart2js compiler.
 
-    ** `includes` A list of inclusion filters for the dart2js compiler.
+    * `outputDirectory` The directory to place the js files after compiling.
 
-    ** `outputDirectory` The directory to place the js files after compiling.
+    * `serverId` settings.xml's server id for the URL. This is used when wagon needs extra authentication information.
 
-    ** `serverId` settings.xml's server id for the URL. This is used when wagon needs extra authentication information.
-
-    ** `skip (Default: false)` Skip the execution of dart2js.
+    * `skip (Default: false)` Skip the execution of dart2js.
     
-    ** `skipVM (Default: false)` Skip downloading dart VM.
+    * `skipVM (Default: false)` Skip downloading dart VM.
 
-    ** `staleMillis (Default: 0)` Sets the granularity in milliseconds of the last modification date for testing whether a dart source needs recompilation.
+    * `staleMillis (Default: 0)` Sets the granularity in milliseconds of the last modification date for testing whether a dart source needs recompilation.
     
 ##Example
 
@@ -50,3 +48,6 @@ An example can be found in the example folder in the git repository.
 ##Maven repository
 
 The Dart Maven Plugin is provided in the In2Experience repository https://dev.in2experience.com/nexus/content/repositories/public-release/
+
+## Authors and Contributors
+Daniel Zwicker (@shadowdz) founded the project on GitHub.
