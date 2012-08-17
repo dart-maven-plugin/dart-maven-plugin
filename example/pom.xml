@@ -10,15 +10,67 @@
 	<build>
 		<plugins>
 			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-war-plugin</artifactId>
+				<configuration>
+					<webResources>
+						<resource>
+							<directory>src/main/dart</directory>
+						</resource>
+						<resource>
+							<directory>target/dart</directory>
+						</resource>
+					</webResources>
+				</configuration>
+			</plugin>
+			<plugin>
 				<groupId>com.google.dart</groupId>
 				<artifactId>maven-dart-plugin</artifactId>
-				<version>1.0.0-SNAPSHOT</version>
+				<version>1.0.1</version>
+				<executions>
+					<execution>
+						<id>dart2js</id>
+						<phase>compile</phase>
+						<goals>
+							<goal>dart2js</goal>
+						</goals>
+					</execution>
+				</executions>
 				<configuration>
 					<checkedMode>true</checkedMode>
-<!-- 					<dartVersion>10500</dartVersion> -->
+					<dartOutputDirectory>/tmp/dart</dartOutputDirectory>
 				</configuration>
 			</plugin>
 		</plugins>
+		<pluginManagement>
+			<plugins>
+				<plugin>
+					<groupId>org.eclipse.m2e</groupId>
+					<artifactId>lifecycle-mapping</artifactId>
+					<version>1.0.0</version>
+					<configuration>
+						<lifecycleMappingMetadata>
+							<pluginExecutions>
+								copy-dependency plugin
+								<pluginExecution>
+									<pluginExecutionFilter>
+										<groupId>com.google.dart</groupId>
+										<artifactId>maven-dart-plugin</artifactId>
+										<versionRange>[1.0.0,)</versionRange>
+										<goals>
+											<goal>dart2js</goal>
+										</goals>
+									</pluginExecutionFilter>
+									<action>
+										<execute />
+									</action>
+								</pluginExecution>
+							</pluginExecutions>
+						</lifecycleMappingMetadata>
+					</configuration>
+				</plugin>
+			</plugins>
+		</pluginManagement>
 	</build>
 
 </project>
