@@ -17,29 +17,18 @@ More configuration details:
 
 ### `dart:dart2js` Goal which compile dart files to javascript. 
 
-    * `checkedMode (Default: false)` Insert runtime type checks and enable assertions (checked mode).
-
-    * `dartOutputDirectory` The directory for downloading the dart SDK.
-
-    * `dartServerUrl` The base URL for Downloading the dart SDK from
-
-    * `dartVersion`  The Version of the dart SDK
-
-    * `excludes` A list of exclusion filters for the dart2js compiler.
-
-    * `executable` provide a dart2js executable
-
-    * `includes` A list of inclusion filters for the dart2js compiler.
-
-    * `outputDirectory` The directory to place the js files after compiling.
-
-    * `serverId` settings.xml's server id for the URL. This is used when wagon needs extra authentication information.
-
-    * `skip (Default: false)` Skip the execution of dart2js.
-    
-    * `skipVM (Default: false)` Skip downloading dart VM.
-
-    * `staleMillis (Default: 0)` Sets the granularity in milliseconds of the last modification date for testing whether a dart source needs recompilation.
+* `checkedMode (Default: false)` Insert runtime type checks and enable assertions (checked mode).
+* `dartOutputDirectory` The directory for downloading the dart SDK.
+* `dartServerUrl` The base URL for Downloading the dart SDK from
+* `dartVersion`  The Version of the dart SDK
+* `excludes` A list of exclusion filters for the dart2js compiler.
+* `executable` provide a dart2js executable
+* `includes` A list of inclusion filters for the dart2js compiler.
+* `outputDirectory` The directory to place the js files after compiling.
+* `serverId` settings.xml's server id for the URL. This is used when wagon needs extra authentication information.
+* `skip (Default: false)` Skip the execution of dart2js.
+* `skipVM (Default: false)` Skip downloading dart VM.
+* `staleMillis (Default: 0)` Sets the granularity in milliseconds of the last modification date for testing whether a dart source needs recompilation.
     
 ##Example
 
