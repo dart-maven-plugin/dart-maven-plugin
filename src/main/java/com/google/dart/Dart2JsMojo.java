@@ -6,9 +6,9 @@ package com.google.dart;
  * copyright ownership. The ASF licenses this file to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance with the License. You may obtain a
  * copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software distributed under the License
  * is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the License for the specific language governing permissions and limitations under
@@ -18,6 +18,7 @@ package com.google.dart;
 import java.io.File;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -46,7 +47,7 @@ import com.google.dart.util.DartVmUtil;
 
 /**
  * Goal which compile dart files to javascript.
- * 
+ *
  * @author Daniel Zwicker
  */
 @Mojo(name = "dart2js", defaultPhase = LifecyclePhase.COMPILE)
@@ -62,15 +63,17 @@ public class Dart2JsMojo
 
 	/**
 	 * The source directories containing the dart sources to be compiled.
-	 * 
+	 *
+	 * If not specified the default is 'src/main/dart'.
+	 *
 	 * @since 1.0
 	 */
-	@Parameter(defaultValue = "${basedir}/src/main/dart", readonly = true, required = true)
-	private List<String>			compileSourceRoots;
+	@Parameter
+	private List<String>			compileSourceRoots				= new ArrayList<String>();
 
 	/**
 	 * Skip the execution of dart2js.
-	 * 
+	 *
 	 * @since 1.0
 	 */
 	@Parameter(defaultValue = "false", property = "dart.skip")
@@ -78,7 +81,7 @@ public class Dart2JsMojo
 
 	/**
 	 * Skip downloading dart VM.
-	 * 
+	 *
 	 * @since 1.0
 	 */
 	@Parameter(defaultValue = "false", property = "dart.skipVM")
@@ -86,7 +89,7 @@ public class Dart2JsMojo
 
 	/**
 	 * The directory to place the js files after compiling.
-	 * 
+	 *
 	 * @since 1.0
 	 */
 	@Parameter(defaultValue = "${project.build.directory}/dart", required = true)
@@ -94,15 +97,17 @@ public class Dart2JsMojo
 
 	/**
 	 * A list of inclusion filters for the dart2js compiler.
-	 * 
+	 *
+	 * If not specified the default is '**&#47;*.dart'
+	 *
 	 * @since 1.0
 	 */
-	@Parameter(defaultValue = "**/*.dart")
-	private final Set<String>		includes				= new HashSet<String>();
+	@Parameter
+	private Set<String>		includes				= Collections.singleton("**/*.dart");
 
 	/**
 	 * A list of exclusion filters for the dart2js compiler.
-	 * 
+	 *
 	 * @since 1.0
 	 */
 	@Parameter
@@ -110,7 +115,7 @@ public class Dart2JsMojo
 
 	/**
 	 * Insert runtime type checks and enable assertions (checked mode).
-	 * 
+	 *
 	 * @since 1.0
 	 */
 	@Parameter(defaultValue = "false", property = "dart.checkedMode")
@@ -124,7 +129,7 @@ public class Dart2JsMojo
 
 	/**
 	 * The directory for downloading the dart SDK.
-	 * 
+	 *
 	 * @since 1.0
 	 */
 	@Parameter(defaultValue = "${project.build.directory}/dependency/dart", required = true)
@@ -132,7 +137,7 @@ public class Dart2JsMojo
 
 	/**
 	 * The Version of the dart SDK
-	 * 
+	 *
 	 * @since 1.0
 	 */
 	@Parameter(defaultValue = "latest", required = true)
@@ -148,14 +153,14 @@ public class Dart2JsMojo
 	/**
 	 * settings.xml's server id for the URL.
 	 * This is used when wagon needs extra authentication information.
-	 * 
+	 *
 	 */
 	@Parameter(defaultValue = "serverId", required = true)
 	private String					serverId;
 
 	/**
 	 * The base URL for Downloading the dart SDK from
-	 * 
+	 *
 	 */
 	@Parameter(defaultValue = "https://gsdview.appspot.com/dart-editor-archive-integration", required = true)
 	private String					dartServerUrl;
@@ -196,6 +201,9 @@ public class Dart2JsMojo
 
 	protected List<String> getCompileSourceRoots()
 	{
+		if(compileSourceRoots.isEmpty()) {
+			return Collections.singletonList(basedir+"/src/main/dart");
+		}
 		return compileSourceRoots;
 	}
 
@@ -222,7 +230,7 @@ public class Dart2JsMojo
 
 	/**
 	 * Check if the execution should be skipped
-	 * 
+	 *
 	 * @return true to skip
 	 */
 	protected boolean isSkip()
@@ -362,7 +370,7 @@ public class Dart2JsMojo
 
 		String dartOutputFileRelativeToBasedir = null;
 		for (final String compileSourceRoot : compileSourceRoots) {
-			final String compileSourceRootRelativeToBasedir = compileSourceRoot.replace(baseDirAbsolutePath, "");
+			final String compileSourceRootRelativeToBasedir = new File(compileSourceRoot).getAbsolutePath().replace(baseDirAbsolutePath, "");
 			if (dartSourceFileRelativeToBasedir.startsWith(compileSourceRootRelativeToBasedir)) {
 				dartOutputFileRelativeToBasedir = dartSourceFileRelativeToBasedir.replace(
 						compileSourceRootRelativeToBasedir, "");
