@@ -143,7 +143,7 @@ public class DartVmUtil {
 
 		String dartSDKFileName = "dartsdk-";
 		if (OsUtil.isWindows()) {
-			dartSDKFileName = "win32";
+			dartSDKFileName += "win32";
 		} else if (OsUtil.isMac()) {
 			dartSDKFileName += "macos";
 		} else if (OsUtil.isUnix()) {
