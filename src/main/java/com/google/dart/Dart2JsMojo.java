@@ -17,11 +17,7 @@ package com.google.dart;
 
 import java.io.File;
 import java.io.OutputStreamWriter;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import org.apache.maven.artifact.manager.WagonManager;
 import org.apache.maven.plugin.AbstractMojo;
@@ -37,11 +33,7 @@ import org.codehaus.plexus.compiler.util.scan.SourceInclusionScanner;
 import org.codehaus.plexus.compiler.util.scan.StaleSourceScanner;
 import org.codehaus.plexus.compiler.util.scan.mapping.SourceMapping;
 import org.codehaus.plexus.compiler.util.scan.mapping.SuffixMapping;
-import org.codehaus.plexus.util.cli.CommandLineException;
-import org.codehaus.plexus.util.cli.CommandLineUtils;
-import org.codehaus.plexus.util.cli.Commandline;
-import org.codehaus.plexus.util.cli.StreamConsumer;
-import org.codehaus.plexus.util.cli.WriterStreamConsumer;
+import org.codehaus.plexus.util.cli.*;
 
 import com.google.dart.util.DartVmUtil;
 
@@ -52,24 +44,23 @@ import com.google.dart.util.DartVmUtil;
  */
 @Mojo(name = "dart2js", defaultPhase = LifecyclePhase.COMPILE)
 public class Dart2JsMojo
-		extends AbstractMojo
-{
+		extends AbstractMojo {
 
-	private final static String		ARGUMENT_CECKED_MODE	= "-c";
+	private final static String ARGUMENT_CECKED_MODE = "-c";
 
-	private final static String		ARGUMENT_OUTPUT_FILE	= "-o";
+	private final static String ARGUMENT_OUTPUT_FILE = "-o";
 
-	private static final String[]	EMPTY_STRING_ARRAY		= {};
+	private static final String[] EMPTY_STRING_ARRAY = {};
 
 	/**
 	 * The source directories containing the dart sources to be compiled.
-	 *
+	 * <p/>
 	 * If not specified the default is 'src/main/dart'.
 	 *
 	 * @since 1.0
 	 */
 	@Parameter
-	private List<String>			compileSourceRoots				= new ArrayList<String>();
+	private List<String> compileSourceRoots = new ArrayList<String>();
 
 	/**
 	 * Skip the execution of dart2js.
@@ -77,7 +68,7 @@ public class Dart2JsMojo
 	 * @since 1.0
 	 */
 	@Parameter(defaultValue = "false", property = "dart.skip")
-	private boolean					skip;
+	private boolean skip;
 
 	/**
 	 * Skip downloading dart VM.
@@ -85,7 +76,7 @@ public class Dart2JsMojo
 	 * @since 1.0
 	 */
 	@Parameter(defaultValue = "false", property = "dart.skipVM")
-	private boolean					skipVM;
+	private boolean skipVM;
 
 	/**
 	 * The directory to place the js files after compiling.
@@ -93,17 +84,17 @@ public class Dart2JsMojo
 	 * @since 1.0
 	 */
 	@Parameter(defaultValue = "${project.build.directory}/dart", required = true)
-	private File					outputDirectory;
+	private File outputDirectory;
 
 	/**
 	 * A list of inclusion filters for the dart2js compiler.
-	 *
+	 * <p/>
 	 * If not specified the default is '**&#47;*.dart'
 	 *
 	 * @since 1.0
 	 */
 	@Parameter
-	private Set<String>		includes				= Collections.singleton("**/*.dart");
+	private Set<String> includes = Collections.singleton("**/*.dart");
 
 	/**
 	 * A list of exclusion filters for the dart2js compiler.
@@ -111,7 +102,7 @@ public class Dart2JsMojo
 	 * @since 1.0
 	 */
 	@Parameter
-	private final Set<String>		excludes				= new HashSet<String>();
+	private final Set<String> excludes = new HashSet<String>();
 
 	/**
 	 * Insert runtime type checks and enable assertions (checked mode).
@@ -119,13 +110,13 @@ public class Dart2JsMojo
 	 * @since 1.0
 	 */
 	@Parameter(defaultValue = "false", property = "dart.checkedMode")
-	private boolean					checkedMode;
+	private boolean checkedMode;
 
 	/**
 	 * provide a dart2js executable
 	 */
 	@Parameter
-	private File					executable;
+	private File executable;
 
 	/**
 	 * The directory for downloading the dart SDK.
@@ -133,7 +124,7 @@ public class Dart2JsMojo
 	 * @since 1.0
 	 */
 	@Parameter(defaultValue = "${project.build.directory}/dependency/dart", required = true)
-	private File					dartOutputDirectory;
+	private File dartOutputDirectory;
 
 	/**
 	 * The Version of the dart SDK
@@ -141,29 +132,27 @@ public class Dart2JsMojo
 	 * @since 1.0
 	 */
 	@Parameter(defaultValue = "latest", required = true)
-	private String					dartVersion;
+	private String dartVersion;
 
 	/**
 	 * Sets the granularity in milliseconds of the last modification
 	 * date for testing whether a dart source needs recompilation.
 	 */
 	@Parameter(property = "lastModGranularityMs", defaultValue = "0")
-	private int						staleMillis;
+	private int staleMillis;
 
 	/**
 	 * settings.xml's server id for the URL.
 	 * This is used when wagon needs extra authentication information.
-	 *
 	 */
 	@Parameter(defaultValue = "serverId", required = true)
-	private String					serverId;
+	private String serverId;
 
 	/**
 	 * The base URL for Downloading the dart SDK from
-	 *
 	 */
 	@Parameter(defaultValue = "https://gsdview.appspot.com/dart-editor-archive-integration", required = true)
-	private String					dartServerUrl;
+	private String dartServerUrl;
 
 	// ----------------------------------------------------------------------
 	// Read-only parameters
@@ -173,25 +162,24 @@ public class Dart2JsMojo
 	 * The directory to run the compiler from if fork is true.
 	 */
 	@Parameter(defaultValue = "${basedir}", required = true, readonly = true)
-	private File					basedir;
+	private File basedir;
 
 	/**
 	 * The current user system settings for use in Maven.
 	 */
 	@Parameter(defaultValue = "${settings}", readonly = true)
-	protected Settings				settings;
+	protected Settings settings;
 
 	@Component
-	protected WagonManager			wagonManager;
+	protected WagonManager wagonManager;
 
 	/**
 	 * To look up Archiver/UnArchiver implementations
 	 */
 	@Component
-	protected ArchiverManager		archiverManager;
+	protected ArchiverManager archiverManager;
 
-	protected File getOutputDirectory()
-	{
+	protected File getOutputDirectory() {
 		return outputDirectory;
 	}
 
@@ -199,28 +187,23 @@ public class Dart2JsMojo
 		return checkedMode;
 	}
 
-	protected List<String> getCompileSourceRoots()
-	{
-		if(compileSourceRoots.isEmpty()) {
-			return Collections.singletonList(basedir+"/src/main/dart");
+	protected List<String> getCompileSourceRoots() {
+		if (compileSourceRoots.isEmpty()) {
+			return Collections.singletonList(basedir + "/src/main/dart");
 		}
 		return compileSourceRoots;
 	}
 
 	/**
 	 * @todo also in ant plugin. This should be resolved at some point so that it does not need to
-	 *       be calculated continuously - or should the plugins accept empty source roots as is?
+	 * be calculated continuously - or should the plugins accept empty source roots as is?
 	 */
-	private static List<String> removeEmptyCompileSourceRoots(final List<String> compileSourceRootsList)
-	{
+	private static List<String> removeEmptyCompileSourceRoots(final List<String> compileSourceRootsList) {
 		final List<String> newCompileSourceRootsList = new ArrayList<String>();
-		if (compileSourceRootsList != null)
-		{
+		if (compileSourceRootsList != null) {
 			// copy as I may be modifying it
-			for (final String srcDir : compileSourceRootsList)
-			{
-				if (!newCompileSourceRootsList.contains(srcDir) && new File(srcDir).exists())
-				{
+			for (final String srcDir : compileSourceRootsList) {
+				if (!newCompileSourceRootsList.contains(srcDir) && new File(srcDir).exists()) {
 					newCompileSourceRootsList.add(srcDir);
 				}
 			}
@@ -233,16 +216,13 @@ public class Dart2JsMojo
 	 *
 	 * @return true to skip
 	 */
-	protected boolean isSkip()
-	{
+	protected boolean isSkip() {
 		return skip;
 	}
 
 	public void execute()
-			throws MojoExecutionException
-	{
-		if (isSkip())
-		{
+			throws MojoExecutionException {
+		if (isSkip()) {
 			getLog().info("skipping execute as per configuraion");
 			return;
 		}
@@ -261,15 +241,13 @@ public class Dart2JsMojo
 
 		final List<String> compileSourceRoots = removeEmptyCompileSourceRoots(getCompileSourceRoots());
 
-		if (compileSourceRoots.isEmpty())
-		{
+		if (compileSourceRoots.isEmpty()) {
 			getLog().info("No sources to compile");
 
 			return;
 		}
 
-		if (getLog().isDebugEnabled())
-		{
+		if (getLog().isDebugEnabled()) {
 			getLog().debug("Source directories: " + compileSourceRoots.toString().replace(',', '\n'));
 			getLog().debug("Output directory: " + getOutputDirectory());
 		}
@@ -288,12 +266,10 @@ public class Dart2JsMojo
 		final Set<File> staleDartSources =
 				computeStaleSources(getSourceInclusionScanner(staleMillis));
 
-		if (getLog().isDebugEnabled())
-		{
+		if (getLog().isDebugEnabled()) {
 			getLog().debug("Source roots:");
 
-			for (final String root : getCompileSourceRoots())
-			{
+			for (final String root : getCompileSourceRoots()) {
 				getLog().debug(" " + root);
 			}
 
@@ -303,14 +279,12 @@ public class Dart2JsMojo
 
 			getLog().debug("Source includes:");
 
-			for (final String include : includes)
-			{
+			for (final String include : getIncludes()) {
 				getLog().debug(" " + include);
 			}
 
 			getLog().debug("Source excludes:");
-			for (final String exclude : excludes)
-			{
+			for (final String exclude : excludes) {
 				getLog().debug(" " + exclude);
 			}
 		}
@@ -370,7 +344,8 @@ public class Dart2JsMojo
 
 		String dartOutputFileRelativeToBasedir = null;
 		for (final String compileSourceRoot : compileSourceRoots) {
-			final String compileSourceRootRelativeToBasedir = new File(compileSourceRoot).getAbsolutePath().replace(baseDirAbsolutePath, "");
+			final String compileSourceRootRelativeToBasedir =
+					new File(compileSourceRoot).getAbsolutePath().replace(baseDirAbsolutePath, "");
 			if (dartSourceFileRelativeToBasedir.startsWith(compileSourceRootRelativeToBasedir)) {
 				dartOutputFileRelativeToBasedir = dartSourceFileRelativeToBasedir.replace(
 						compileSourceRootRelativeToBasedir, "");
@@ -388,8 +363,7 @@ public class Dart2JsMojo
 	}
 
 	private Set<File> computeStaleSources(final SourceInclusionScanner scanner)
-			throws MojoExecutionException
-	{
+			throws MojoExecutionException {
 		final SourceMapping mapping = new SuffixMapping("dart", "dart.js");
 		final File outputDirectory = getOutputDirectory();
 
@@ -397,20 +371,16 @@ public class Dart2JsMojo
 
 		final Set<File> staleSources = new HashSet<File>();
 
-		for (final String sourceRoot : getCompileSourceRoots())
-		{
+		for (final String sourceRoot : getCompileSourceRoots()) {
 			final File rootFile = new File(sourceRoot);
 
-			if (!rootFile.isDirectory())
-			{
+			if (!rootFile.isDirectory()) {
 				continue;
 			}
 
-			try
-			{
+			try {
 				staleSources.addAll(scanner.getIncludedSources(rootFile, outputDirectory));
-			} catch (final InclusionScanException e)
-			{
+			} catch (final InclusionScanException e) {
 				throw new MojoExecutionException(
 						"Error scanning source root: \'" + sourceRoot + "\' for stale files to recompile.", e);
 			}
@@ -419,24 +389,14 @@ public class Dart2JsMojo
 		return staleSources;
 	}
 
-	private SourceInclusionScanner getSourceInclusionScanner(final int staleMillis)
-	{
-		SourceInclusionScanner scanner = null;
-
-		if (includes.isEmpty() && excludes.isEmpty())
-		{
-			scanner = new StaleSourceScanner(staleMillis);
-		}
-		else
-		{
-			if (includes.isEmpty())
-			{
-				includes.add("**/*.dart");
-			}
-			scanner = new StaleSourceScanner(staleMillis, includes, excludes);
-		}
-
-		return scanner;
+	private SourceInclusionScanner getSourceInclusionScanner(final int staleMillis) {
+		return new StaleSourceScanner(staleMillis, getIncludes(), excludes);
 	}
 
+	public Set<String> getIncludes() {
+		if (includes.isEmpty()) {
+			return Collections.singleton("**/.dart");
+		}
+		return includes;
+	}
 }
