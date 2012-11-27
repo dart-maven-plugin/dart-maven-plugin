@@ -7,11 +7,27 @@
     <packaging>war</packaging>
     <version>0.0.1-SNAPSHOT</version>
 
+    <distributionManagement>
+        <repository>
+            <id>in2ex-releases</id>
+            <name>In2Experience Repository</name>
+            <url>http://dev.in2experience.com/nexus/content/repositories/public-release/</url>
+            <uniqueVersion>true</uniqueVersion>
+        </repository>
+        <snapshotRepository>
+            <id>in2ex-snapshots</id>
+            <name>In2Experience Snapshot Repository</name>
+            <url>http://dev.in2experience.com/nexus/content/repositories/snapshots/</url>
+            <uniqueVersion>true</uniqueVersion>
+        </snapshotRepository>
+    </distributionManagement>
+
     <build>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-war-plugin</artifactId>
+                <version>2.2</version>
                 <configuration>
                     <webResources>
                         <resource>
@@ -26,7 +42,7 @@
             <plugin>
                 <groupId>com.google.dart</groupId>
                 <artifactId>dart-maven-plugin</artifactId>
-                <version>1.0.1-SNAPSHOT</version>
+                <version>1.0.2-SNAPSHOT</version>
                 <executions>
                     <execution>
                         <id>dart2js</id>
@@ -38,11 +54,6 @@
                 </executions>
                 <configuration>
                     <checkedMode>true</checkedMode>
-                    <dartOutputDirectory>/tmp/dart</dartOutputDirectory>
-                    <!--<includes>-->
-                    <!--<include>map/mapPage.dart</include>-->
-                    <!--<include>templates/footer.dart</include>-->
-                    <!--</includes>-->
                 </configuration>
             </plugin>
         </plugins>
