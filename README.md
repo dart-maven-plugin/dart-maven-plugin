@@ -6,7 +6,7 @@ The Dart Maven Plugin provides integration of Dart into a maven build process.
 
 The Dart Plugin has one goal (besides the help goal). It is already bound to his proper phase within the Maven Lifecycle (compile) and is therefore, automatically executed during his respective phase.
 
-* `dart:dart2js` Goal which compile dart files to javascript.
+* `dart:dart2js` Goal to compile dart files to javascript.
 * `dart:help`  Display help information on maven-dart-plugin. Call mvn dart:help -Ddetail=true -Dgoal=<goal-name> to display parameter details.
 
 ##Usage
@@ -15,7 +15,7 @@ The dart2js goal uses the dart2js compiler from the dart project to compile any 
 
 More configuration details:
 
-### `dart:dart2js` Goal which compile dart files to javascript. 
+### `dart:dart2js` Goal to compile dart files to javascript. 
 
 Please use mvn dart:help for more information.
     
@@ -29,3 +29,7 @@ The Dart Maven Plugin is provided in the In2Experience repository https://dev.in
 
 ## Authors and Contributors
 Daniel Zwicker (@dzwicker) founded the project on GitHub.
+
+### Comitter
+
+* @youngm
