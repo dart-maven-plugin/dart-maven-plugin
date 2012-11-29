@@ -61,6 +61,13 @@ public class Dart2JsMojo
 	 * @since 1.0.3
 	 */
 	private final static String ARGUMENT_MINIFY = "--minify";
+
+	/**
+	 * Do not display any warnings.
+	 *
+	 * @since 1.0.3
+	 */
+	private final static String ARGUMENT_SUPPRESS_WARNINGS = "--suppress-warnings";
 	private static final String[] EMPTY_STRING_ARRAY = {};
 
 	/**
@@ -104,6 +111,14 @@ public class Dart2JsMojo
 	 */
 	@Parameter(defaultValue = "false", property = "dart.minify")
 	private boolean minify;
+
+	/**
+	 * Do not display any warnings.
+	 *
+	 * @since 1.0.3
+	 */
+	@Parameter(defaultValue = "false", property = "dart.suppressWarnings")
+	private boolean suppressWarnings;
 	 * The directory to place the js files after compiling.
 	 *
 	 * @since 1.0
@@ -184,6 +199,10 @@ public class Dart2JsMojo
 
 		if (minify) {
 			arguments.add(ARGUMENT_MINIFY);
+		}
+
+		if (suppressWarnings) {
+			arguments.add(ARGUMENT_SUPPRESS_WARNINGS);
 		}
 		final Set<File> staleDartSources =
 				computeStaleSources(getSourceInclusionScanner(staleMillis));
