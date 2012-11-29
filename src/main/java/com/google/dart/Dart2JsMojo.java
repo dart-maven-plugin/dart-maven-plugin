@@ -54,6 +54,13 @@ public class Dart2JsMojo
 	 * @since 1.0.3
 	 */
 	private final static String ARGUMENT_VERBOSE = "-v";
+
+	/**
+	 * Generate minified output.
+	 *
+	 * @since 1.0.3
+	 */
+	private final static String ARGUMENT_MINIFY = "--minify";
 	private static final String[] EMPTY_STRING_ARRAY = {};
 
 	/**
@@ -89,6 +96,14 @@ public class Dart2JsMojo
 	 */
 	@Parameter(defaultValue = "false", property = "dart.verbose")
 	private boolean verbose;
+
+	/**
+	 * Generate minified output.
+	 *
+	 * @since 1.0.3
+	 */
+	@Parameter(defaultValue = "false", property = "dart.minify")
+	private boolean minify;
 	 * The directory to place the js files after compiling.
 	 *
 	 * @since 1.0
@@ -165,6 +180,10 @@ public class Dart2JsMojo
 
 		if (verbose) {
 			arguments.add(ARGUMENT_VERBOSE);
+		}
+
+		if (minify) {
+			arguments.add(ARGUMENT_MINIFY);
 		}
 		final Set<File> staleDartSources =
 				computeStaleSources(getSourceInclusionScanner(staleMillis));
