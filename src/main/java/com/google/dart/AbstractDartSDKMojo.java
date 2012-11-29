@@ -37,7 +37,7 @@ import com.google.dart.util.DependencyUtil;
 import com.google.dart.util.OsUtil;
 import com.google.dart.util.WagonUtils;
 
-public abstract class AbstractDartVmMojo extends AbstractDartMojo {
+public abstract class AbstractDartSDKMojo extends AbstractDartMojo {
 
 	/**
 	 * Skip downloading dart VM.
