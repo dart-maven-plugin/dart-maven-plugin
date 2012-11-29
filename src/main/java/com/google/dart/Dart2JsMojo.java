@@ -63,6 +63,15 @@ public class Dart2JsMojo
 	private final static String ARGUMENT_PACKAGE_ROOT = "-p";
 
 	/**
+	 * Analyze all code. Without this option, the compiler only analyzes code that is reachable from [main].
+	 * This option is useful for finding errors in libraries,
+	 * but using it can result in bigger and slower output.
+	 *
+	 * @since 1.0.3
+	 */
+	private final static String ARGUMENT_ANALYSE_ALL = "--analyze-all";
+
+	/**
 	 * Generate minified output.
 	 *
 	 * @since 1.0.3
@@ -118,6 +127,16 @@ public class Dart2JsMojo
 	 */
 	@Parameter(defaultValue = "false", property = "dart.verbose")
 	private boolean verbose;
+
+	/**
+	 * Analyze all code. Without this option, the compiler only analyzes code that is reachable from [main].
+	 * This option is useful for finding errors in libraries,
+	 * but using it can result in bigger and slower output.
+	 *
+	 * @since 1.0.3
+	 */
+	@Parameter(defaultValue = "false", property = "dart.analyseAll")
+	private boolean analyseAll;
 
 	/**
 	 * Generate minified output.
@@ -233,6 +252,10 @@ public class Dart2JsMojo
 
 		if (verbose) {
 			arguments.add(ARGUMENT_VERBOSE);
+		}
+
+		if (analyseAll) {
+			arguments.add(ARGUMENT_ANALYSE_ALL);
 		}
 
 		if (minify) {
