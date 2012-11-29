@@ -154,7 +154,7 @@ public class Dart2JsMojo
 	 * @since 1.0
 	 */
 	@Parameter
-	private Set<String> includes = Collections.singleton("**/*.dart");
+	private Set<String> includes = new HashSet<String>();
 
 	/**
 	 * A list of exclusion filters for the dart2js compiler.
@@ -404,7 +404,7 @@ public class Dart2JsMojo
 
 	public Set<String> getIncludes() {
 		if (includes.isEmpty()) {
-			return Collections.singleton("**/.dart");
+			return Collections.singleton("**/*.dart");
 		}
 		return includes;
 	}
