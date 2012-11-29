@@ -199,7 +199,8 @@ public class Dart2JsMojo
 
 		String compilerPath = null;
 		try {
-			compilerPath = generateDartExecutable();
+			checkAndDownloadDartSDK();
+			compilerPath = getDart2JsExecutable().getAbsolutePath();
 		} catch (final Exception e) {
 			throw new MojoExecutionException("Unable to download dart vm", e);
 		}
@@ -291,6 +292,9 @@ public class Dart2JsMojo
 					dartOutputFile.getParentFile().mkdirs();
 				}
 				final int returnValue = CommandLineUtils.executeCommandLine(cl, output, error);
+				if (returnValue != 0) {
+					throw new MojoExecutionException("Dart2Js returned error code " + returnValue);
+				}
 				getLog().debug("dart2js returncode: " + returnValue);
 			} catch (final CommandLineException e) {
 				getLog().debug("dart2js error: ", e);
