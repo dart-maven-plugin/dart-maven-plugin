@@ -352,14 +352,14 @@ public class Dart2JsMojo
 				"") + ".js";
 
 		String dartOutputFileRelativeToBasedir = null;
-		for (final String compileSourceRoot : compileSourceRoots) {
-			final String compileSourceRootRelativeToBasedir =
-					new File(compileSourceRoot).getAbsolutePath().replace(baseDirAbsolutePath, "");
-			if (dartSourceFileRelativeToBasedir.startsWith(compileSourceRootRelativeToBasedir)) {
-				dartOutputFileRelativeToBasedir = dartSourceFileRelativeToBasedir.replace(
-						compileSourceRootRelativeToBasedir, "");
+		for (final String compileSourceRoot : getCompileSourceRoots()) {
+
+			if (dartSourceFileAbsolutePath.startsWith(compileSourceRoot)) {
+				dartOutputFileRelativeToBasedir = dartSourceFileAbsolutePath.replace(compileSourceRoot, "");
+				dartOutputFileRelativeToBasedir += ".js";
 				break;
 			}
+
 		}
 
 		final String dartOutputFile = outputDirectory.getAbsolutePath() + dartOutputFileRelativeToBasedir;
