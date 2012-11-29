@@ -68,6 +68,14 @@ public class Dart2JsMojo
 	 * @since 1.0.3
 	 */
 	private final static String ARGUMENT_SUPPRESS_WARNINGS = "--suppress-warnings";
+
+	/**
+	 * Add colors to diagnostic messages.
+	 *
+	 * @since 1.0.3
+	 */
+	private final static String ARGUMENT_DIAGNOSTIC_COLORS = "--enable-diagnostic-colors";
+
 	private static final String[] EMPTY_STRING_ARRAY = {};
 
 	/**
@@ -119,6 +127,14 @@ public class Dart2JsMojo
 	 */
 	@Parameter(defaultValue = "false", property = "dart.suppressWarnings")
 	private boolean suppressWarnings;
+
+	/**
+	 * Add colors to diagnostic messages.
+	 *
+	 * @since 1.0.3
+	 */
+	@Parameter(defaultValue = "false", property = "dart.diagnosticColors")
+	private boolean diagnosticColors;
 	 * The directory to place the js files after compiling.
 	 *
 	 * @since 1.0
@@ -203,6 +219,10 @@ public class Dart2JsMojo
 
 		if (suppressWarnings) {
 			arguments.add(ARGUMENT_SUPPRESS_WARNINGS);
+		}
+
+		if (diagnosticColors) {
+			arguments.add(ARGUMENT_DIAGNOSTIC_COLORS);
 		}
 		final Set<File> staleDartSources =
 				computeStaleSources(getSourceInclusionScanner(staleMillis));
