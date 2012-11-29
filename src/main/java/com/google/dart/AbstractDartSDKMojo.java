@@ -48,12 +48,12 @@ public abstract class AbstractDartSDKMojo extends AbstractDartMojo {
 	private boolean skipVM;
 
 	/**
-	 * provide a dart2js executable
+	 * provide a dart home
 	 *
-	 * @since 1.0
+	 * @since 1.0.3
 	 */
 	@Parameter
-	private File executable;
+	private File dartHome;
 
 	/**
 	 * Strip artifact version during copy
@@ -68,7 +68,7 @@ public abstract class AbstractDartSDKMojo extends AbstractDartMojo {
 	 *
 	 * @since 1.0
 	 */
-	@Parameter(defaultValue = "${project.build.directory}/dependency")
+	@Parameter(defaultValue = "${project.build.directory}/dependency", required = true)
 	protected File dependencyOutputDirectory;
 
 	/**
@@ -143,14 +143,12 @@ public abstract class AbstractDartSDKMojo extends AbstractDartMojo {
 	@Component
 	private ArchiverManager archiverManager;
 
-	protected String generateDartExecutable()
+	protected void checkAndDownloadDartSDK()
 			throws RepositoryException, MojoExecutionException, NoSuchArchiverException, WagonException,
 			FileNotFoundException, ParseException, JSONException, MojoFailureException {
-		if (executable != null && executable.exists()) {
+		if (dartHome != null && dartHome.exists()) {
 			checkDart2Js();
-			final String execPath = executable.getAbsolutePath();
-			getLog().info("Executable configured to " + execPath);
-			return execPath;
+			getLog().info("DartHome configured to " + dartHome);
 		}
 
 		if (getLog().isDebugEnabled()) {
@@ -180,10 +178,9 @@ public abstract class AbstractDartSDKMojo extends AbstractDartMojo {
 			handler.setMarker();
 		}
 
-		executable = new File(destDir, "dart-sdk/bin/dart2js" + (OsUtil.isWindows() ? ".bat" : ""));
+		dartHome = destDir;
 
 		checkDart2Js();
-		return executable.getAbsolutePath();
 	}
 
 	private File resolveZip(final Artifact dartVMArtifact) throws RepositoryException {
@@ -318,17 +315,21 @@ public abstract class AbstractDartSDKMojo extends AbstractDartMojo {
 		return dartVersionJSON;
 	}
 
-	private void checkDart2Js() {
-		if (executable == null) {
-			throw new NullPointerException("Dart2js required. Configuration erro for executable?");
+	protected void checkDart2Js() {
+		checkDartHome();
+		if (!getDart2JsExecutable().canExecute()) {
+			throw new IllegalArgumentException("Dart2js not executable! Configuration error for dartHome? dartHome="
+					+ dartHome.getAbsolutePath());
 		}
-		if (!executable.isFile()) {
-			throw new IllegalArgumentException("Dart2js required. Configuration erro for executable? executable="
-					+ executable.getAbsolutePath());
+	}
+
+	private void checkDartHome() {
+		if (dartHome == null) {
+			throw new NullPointerException("DartHome required. Configuration error for dartHome?");
 		}
-		if (!executable.canExecute()) {
-			throw new IllegalArgumentException("Dart2js not executable! Configuration erro for executable? executable="
-					+ executable.getAbsolutePath());
+		if (!dartHome.isDirectory()) {
+			throw new IllegalArgumentException("DartHome required. Configuration error for dartHome? dartHome="
+					+ dartHome.getAbsolutePath());
 		}
 	}
 
@@ -373,8 +374,8 @@ public abstract class AbstractDartSDKMojo extends AbstractDartMojo {
 		return skipVM;
 	}
 
-	protected File getExecutable() {
-		return executable;
+	protected File getDart2JsExecutable() {
+		return new File(dartHome, "dart-sdk/bin/dart2js" + (OsUtil.isWindows() ? ".bat" : ""));
 	}
 
 	protected String getDartVersion() {
