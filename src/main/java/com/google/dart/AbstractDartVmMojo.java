@@ -49,12 +49,16 @@ public abstract class AbstractDartVmMojo extends AbstractDartMojo {
 
 	/**
 	 * provide a dart2js executable
+	 *
+	 * @since 1.0
 	 */
 	@Parameter
 	private File executable;
 
 	/**
 	 * Strip artifact version during copy
+	 *
+	 * @since 1.0
 	 */
 	@Parameter(property = "dart.stripVersion", defaultValue = "false")
 	protected boolean stripVersion = false;
@@ -71,7 +75,7 @@ public abstract class AbstractDartVmMojo extends AbstractDartMojo {
 	 * Place each artifact in the same directory layout as a default repository.
 	 * <br/>example: /dependencyOutputDirectory/junit/junit/3.8.1/junit-3.8.1.jar
 	 *
-	 * @since 2.0-alpha-2
+	 * @since 1.0.2
 	 */
 	@Parameter(property = "dart.useRepositoryLayout", defaultValue = "false")
 	protected boolean useRepositoryLayout;
@@ -80,7 +84,7 @@ public abstract class AbstractDartVmMojo extends AbstractDartMojo {
 	 * Place each type of file in a separate subdirectory. (example
 	 * /dependencyOutputDirectory/jars /dependencyOutputDirectory/wars etc)
 	 *
-	 * @since 2.0-alpha-1
+	 * @since 1.0.2
 	 */
 	@Parameter(property = "dart.useSubDirectoryPerType", defaultValue = "false")
 	protected boolean useSubDirectoryPerType;
@@ -89,13 +93,15 @@ public abstract class AbstractDartVmMojo extends AbstractDartMojo {
 	 * Place each file in a separate subdirectory. (example
 	 * <code>/dependencyOutputDirectory/junit-3.8.1-jar</code>)
 	 *
-	 * @since 2.0-alpha-1
+	 * @since 1.0.2
 	 */
 	@Parameter(property = "dart.useSubDirectoryPerArtifact", defaultValue = "false")
 	protected boolean useSubDirectoryPerArtifact;
 
 	/**
 	 * Directory to store flag files after unpack
+	 *
+	 * @since 1.0
 	 */
 	@Parameter(defaultValue = "${project.build.directory}/dependency-maven-plugin-markers")
 	private File markersDirectory;
@@ -111,6 +117,8 @@ public abstract class AbstractDartVmMojo extends AbstractDartMojo {
 	/**
 	 * settings.xml's server id for the URL.
 	 * This is used when wagon needs extra authentication information.
+	 *
+	 * @since 1.0
 	 */
 	@Parameter(defaultValue = "serverId", required = true)
 	private String serverId;

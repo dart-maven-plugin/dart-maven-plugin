@@ -41,6 +41,11 @@ public class Dart2JsMojo
 
 	private final static String ARGUMENT_CECKED_MODE = "-c";
 
+	/**
+	 * Generate the output into <file>
+	 *
+	 * @since 1.0
+	 */
 	private final static String ARGUMENT_OUTPUT_FILE = "-o";
 
 	private static final String[] EMPTY_STRING_ARRAY = {};
@@ -64,6 +69,12 @@ public class Dart2JsMojo
 	private boolean skip;
 
 	/**
+	 * Insert runtime type checks and enable assertions (checked mode).
+	 *
+	 * @since 1.0
+	 */
+	@Parameter(defaultValue = "false", property = "dart.checkedMode")
+	private boolean checkedMode;
 	 * The directory to place the js files after compiling.
 	 *
 	 * @since 1.0
@@ -90,16 +101,10 @@ public class Dart2JsMojo
 	private final Set<String> excludes = new HashSet<String>();
 
 	/**
-	 * Insert runtime type checks and enable assertions (checked mode).
-	 *
-	 * @since 1.0
-	 */
-	@Parameter(defaultValue = "false", property = "dart.checkedMode")
-	private boolean checkedMode;
-
-	/**
 	 * Sets the granularity in milliseconds of the last modification
 	 * date for testing whether a dart source needs recompilation.
+	 *
+	 * @since 1.0
 	 */
 	@Parameter(property = "lastModGranularityMs", defaultValue = "0")
 	private int staleMillis;
