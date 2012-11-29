@@ -56,6 +56,13 @@ public class Dart2JsMojo
 	private final static String ARGUMENT_VERBOSE = "-v";
 
 	/**
+	 * Where to find packages, that is, "package:..." imports.
+	 *
+	 * @since 1.0.3
+	 */
+	private final static String ARGUMENT_PACKAGE_ROOT = "-p";
+
+	/**
 	 * Generate minified output.
 	 *
 	 * @since 1.0.3
@@ -147,6 +154,16 @@ public class Dart2JsMojo
 	private File outputDirectory;
 
 	/**
+	 * Where to find packages, that is, "package:..." imports.
+	 * <p/>
+	 * If not specified the default is 'packages'.
+	 *
+	 * @since 1.0.3
+	 */
+	@Parameter(defaultValue = "${basedir}/packages", required = true, property = "dart.packageRoot")
+	private String packageRoot;
+
+	/**
 	 * A list of inclusion filters for the dart2js compiler.
 	 * <p/>
 	 * If not specified the default is '**&#47;*.dart'
@@ -228,6 +245,9 @@ public class Dart2JsMojo
 		if (diagnosticColors) {
 			arguments.add(ARGUMENT_DIAGNOSTIC_COLORS);
 		}
+
+		arguments.add(ARGUMENT_PACKAGE_ROOT + packageRoot);
+
 		final Set<File> staleDartSources =
 				computeStaleSources(getSourceInclusionScanner(staleMillis));
 
