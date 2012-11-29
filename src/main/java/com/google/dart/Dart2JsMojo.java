@@ -48,6 +48,12 @@ public class Dart2JsMojo
 	 */
 	private final static String ARGUMENT_OUTPUT_FILE = "-o";
 
+	/**
+	 * Display verbose information.
+	 *
+	 * @since 1.0.3
+	 */
+	private final static String ARGUMENT_VERBOSE = "-v";
 	private static final String[] EMPTY_STRING_ARRAY = {};
 
 	/**
@@ -75,6 +81,14 @@ public class Dart2JsMojo
 	 */
 	@Parameter(defaultValue = "false", property = "dart.checkedMode")
 	private boolean checkedMode;
+
+	/**
+	 * Display verbose information.
+	 *
+	 * @since 1.0.3
+	 */
+	@Parameter(defaultValue = "false", property = "dart.verbose")
+	private boolean verbose;
 	 * The directory to place the js files after compiling.
 	 *
 	 * @since 1.0
@@ -149,6 +163,9 @@ public class Dart2JsMojo
 			arguments.add(ARGUMENT_CECKED_MODE);
 		}
 
+		if (verbose) {
+			arguments.add(ARGUMENT_VERBOSE);
+		}
 		final Set<File> staleDartSources =
 				computeStaleSources(getSourceInclusionScanner(staleMillis));
 
