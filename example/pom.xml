@@ -42,7 +42,7 @@
             <plugin>
                 <groupId>com.google.dart</groupId>
                 <artifactId>dart-maven-plugin</artifactId>
-                <version>1.0.2-SNAPSHOT</version>
+                <version>1.0.3-SNAPSHOT</version>
                 <executions>
                     <execution>
                         <id>dart2js</id>
