@@ -37,7 +37,7 @@ import org.codehaus.plexus.util.cli.*;
  */
 @Mojo(name = "dart2js", defaultPhase = LifecyclePhase.COMPILE)
 public class Dart2JsMojo
-		extends AbstractDartVmMojo {
+		extends AbstractDartSDKMojo {
 
 	private final static String ARGUMENT_CECKED_MODE = "-c";
 
