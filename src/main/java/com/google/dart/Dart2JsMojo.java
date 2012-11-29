@@ -135,11 +135,15 @@ public class Dart2JsMojo
 	 */
 	@Parameter(defaultValue = "false", property = "dart.diagnosticColors")
 	private boolean diagnosticColors;
+
+	/**
 	 * The directory to place the js files after compiling.
+	 * <p/>
+	 * If not specified the default is 'target/dart'.
 	 *
 	 * @since 1.0
 	 */
-	@Parameter(defaultValue = "${project.build.directory}/dart", required = true)
+	@Parameter(defaultValue = "${project.build.directory}/dart", required = true, property = "dart.outputDirectory")
 	private File outputDirectory;
 
 	/**
