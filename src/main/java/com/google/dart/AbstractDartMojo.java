@@ -19,12 +19,16 @@ public abstract class AbstractDartMojo extends AbstractDeployMojo {
 
 	/**
 	 * The directory to run the compiler from if fork is true.
+	 *
+	 * @since 1.0
 	 */
 	@Parameter(defaultValue = "${basedir}", required = true, readonly = true)
 	private File basedir;
 
 	/**
 	 * The current user system settings for use in Maven.
+	 *
+	 * @since 1.0
 	 */
 	@Parameter(defaultValue = "${settings}", readonly = true)
 	private Settings settings;

@@ -42,19 +42,19 @@
             <plugin>
                 <groupId>com.google.dart</groupId>
                 <artifactId>dart-maven-plugin</artifactId>
-                <version>1.0.2-SNAPSHOT</version>
+                <version>1.0.3-SNAPSHOT</version>
+                <configuration>
+                    <checkedMode>true</checkedMode>
+                    <dartVersion>15355</dartVersion>
+                </configuration>
                 <executions>
                     <execution>
-                        <id>dart2js</id>
-                        <phase>compile</phase>
+                        <id>compile</id>
                         <goals>
                             <goal>dart2js</goal>
                         </goals>
                     </execution>
                 </executions>
-                <configuration>
-                    <checkedMode>true</checkedMode>
-                </configuration>
             </plugin>
         </plugins>
         <pluginManagement>

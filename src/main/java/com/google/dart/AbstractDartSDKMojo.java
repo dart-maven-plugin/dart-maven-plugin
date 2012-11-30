@@ -37,7 +37,7 @@ import com.google.dart.util.DependencyUtil;
 import com.google.dart.util.OsUtil;
 import com.google.dart.util.WagonUtils;
 
-public abstract class AbstractDartVmMojo extends AbstractDartMojo {
+public abstract class AbstractDartSDKMojo extends AbstractDartMojo {
 
 	/**
 	 * Skip downloading dart VM.
@@ -48,13 +48,17 @@ public abstract class AbstractDartVmMojo extends AbstractDartMojo {
 	private boolean skipVM;
 
 	/**
-	 * provide a dart2js executable
+	 * provide a dart home
+	 *
+	 * @since 1.0.3
 	 */
 	@Parameter
-	private File executable;
+	private File dartHome;
 
 	/**
 	 * Strip artifact version during copy
+	 *
+	 * @since 1.0
 	 */
 	@Parameter(property = "dart.stripVersion", defaultValue = "false")
 	protected boolean stripVersion = false;
@@ -64,14 +68,14 @@ public abstract class AbstractDartVmMojo extends AbstractDartMojo {
 	 *
 	 * @since 1.0
 	 */
-	@Parameter(defaultValue = "${project.build.directory}/dependency")
+	@Parameter(defaultValue = "${project.build.directory}/dependency", required = true)
 	protected File dependencyOutputDirectory;
 
 	/**
 	 * Place each artifact in the same directory layout as a default repository.
 	 * <br/>example: /dependencyOutputDirectory/junit/junit/3.8.1/junit-3.8.1.jar
 	 *
-	 * @since 2.0-alpha-2
+	 * @since 1.0.2
 	 */
 	@Parameter(property = "dart.useRepositoryLayout", defaultValue = "false")
 	protected boolean useRepositoryLayout;
@@ -80,7 +84,7 @@ public abstract class AbstractDartVmMojo extends AbstractDartMojo {
 	 * Place each type of file in a separate subdirectory. (example
 	 * /dependencyOutputDirectory/jars /dependencyOutputDirectory/wars etc)
 	 *
-	 * @since 2.0-alpha-1
+	 * @since 1.0.2
 	 */
 	@Parameter(property = "dart.useSubDirectoryPerType", defaultValue = "false")
 	protected boolean useSubDirectoryPerType;
@@ -89,13 +93,15 @@ public abstract class AbstractDartVmMojo extends AbstractDartMojo {
 	 * Place each file in a separate subdirectory. (example
 	 * <code>/dependencyOutputDirectory/junit-3.8.1-jar</code>)
 	 *
-	 * @since 2.0-alpha-1
+	 * @since 1.0.2
 	 */
 	@Parameter(property = "dart.useSubDirectoryPerArtifact", defaultValue = "false")
 	protected boolean useSubDirectoryPerArtifact;
 
 	/**
 	 * Directory to store flag files after unpack
+	 *
+	 * @since 1.0
 	 */
 	@Parameter(defaultValue = "${project.build.directory}/dependency-maven-plugin-markers")
 	private File markersDirectory;
@@ -111,6 +117,8 @@ public abstract class AbstractDartVmMojo extends AbstractDartMojo {
 	/**
 	 * settings.xml's server id for the URL.
 	 * This is used when wagon needs extra authentication information.
+	 *
+	 * @since 1.0
 	 */
 	@Parameter(defaultValue = "serverId", required = true)
 	private String serverId;
@@ -135,14 +143,12 @@ public abstract class AbstractDartVmMojo extends AbstractDartMojo {
 	@Component
 	private ArchiverManager archiverManager;
 
-	protected String generateDartExecutable()
+	protected void checkAndDownloadDartSDK()
 			throws RepositoryException, MojoExecutionException, NoSuchArchiverException, WagonException,
 			FileNotFoundException, ParseException, JSONException, MojoFailureException {
-		if (executable != null && executable.exists()) {
+		if (dartHome != null && dartHome.exists()) {
 			checkDart2Js();
-			final String execPath = executable.getAbsolutePath();
-			getLog().info("Executable configured to " + execPath);
-			return execPath;
+			getLog().info("DartHome configured to " + dartHome);
 		}
 
 		if (getLog().isDebugEnabled()) {
@@ -172,10 +178,9 @@ public abstract class AbstractDartVmMojo extends AbstractDartMojo {
 			handler.setMarker();
 		}
 
-		executable = new File(destDir, "dart-sdk/bin/dart2js" + (OsUtil.isWindows() ? ".bat" : ""));
+		dartHome = destDir;
 
 		checkDart2Js();
-		return executable.getAbsolutePath();
 	}
 
 	private File resolveZip(final Artifact dartVMArtifact) throws RepositoryException {
@@ -310,17 +315,21 @@ public abstract class AbstractDartVmMojo extends AbstractDartMojo {
 		return dartVersionJSON;
 	}
 
-	private void checkDart2Js() {
-		if (executable == null) {
-			throw new NullPointerException("Dart2js required. Configuration erro for executable?");
+	protected void checkDart2Js() {
+		checkDartHome();
+		if (!getDart2JsExecutable().canExecute()) {
+			throw new IllegalArgumentException("Dart2js not executable! Configuration error for dartHome? dartHome="
+					+ dartHome.getAbsolutePath());
 		}
-		if (!executable.isFile()) {
-			throw new IllegalArgumentException("Dart2js required. Configuration erro for executable? executable="
-					+ executable.getAbsolutePath());
+	}
+
+	private void checkDartHome() {
+		if (dartHome == null) {
+			throw new NullPointerException("DartHome required. Configuration error for dartHome?");
 		}
-		if (!executable.canExecute()) {
-			throw new IllegalArgumentException("Dart2js not executable! Configuration erro for executable? executable="
-					+ executable.getAbsolutePath());
+		if (!dartHome.isDirectory()) {
+			throw new IllegalArgumentException("DartHome required. Configuration error for dartHome? dartHome="
+					+ dartHome.getAbsolutePath());
 		}
 	}
 
@@ -365,8 +374,12 @@ public abstract class AbstractDartVmMojo extends AbstractDartMojo {
 		return skipVM;
 	}
 
-	protected File getExecutable() {
-		return executable;
+	protected File getDart2JsExecutable() {
+		return new File(dartHome, "dart-sdk/bin/dart2js" + (OsUtil.isWindows() ? ".bat" : ""));
+	}
+
+	protected File getDartHome() {
+		return dartHome;
 	}
 
 	protected String getDartVersion() {

@@ -37,11 +37,60 @@ import org.codehaus.plexus.util.cli.*;
  */
 @Mojo(name = "dart2js", defaultPhase = LifecyclePhase.COMPILE)
 public class Dart2JsMojo
-		extends AbstractDartVmMojo {
+		extends PubMojo {
 
 	private final static String ARGUMENT_CECKED_MODE = "-c";
 
+	/**
+	 * Generate the output into <file>
+	 *
+	 * @since 1.0
+	 */
 	private final static String ARGUMENT_OUTPUT_FILE = "-o";
+
+	/**
+	 * Display verbose information.
+	 *
+	 * @since 1.0.3
+	 */
+	private final static String ARGUMENT_VERBOSE = "-v";
+
+	/**
+	 * Where to find packages, that is, "package:..." imports.
+	 *
+	 * @since 1.0.3
+	 */
+	private final static String ARGUMENT_PACKAGE_ROOT = "-p";
+
+	/**
+	 * Analyze all code. Without this option, the compiler only analyzes code that is reachable from [main].
+	 * This option is useful for finding errors in libraries,
+	 * but using it can result in bigger and slower output.
+	 *
+	 * @since 1.0.3
+	 */
+	private final static String ARGUMENT_ANALYSE_ALL = "--analyze-all";
+
+	/**
+	 * Generate minified output.
+	 *
+	 * @since 1.0.3
+	 */
+	private final static String ARGUMENT_MINIFY = "--minify";
+
+	/**
+	 * Do not display any warnings.
+	 *
+	 * @since 1.0.3
+	 */
+	private final static String ARGUMENT_SUPPRESS_WARNINGS = "--suppress-warnings";
+
+	/**
+	 * Add colors to diagnostic messages.
+	 *
+	 * @since 1.0.3
+	 */
+	private final static String ARGUMENT_DIAGNOSTIC_COLORS = "--enable-diagnostic-colors";
 
 	private static final String[] EMPTY_STRING_ARRAY = {};
 
@@ -64,12 +113,77 @@ public class Dart2JsMojo
 	private boolean skip;
 
 	/**
-	 * The directory to place the js files after compiling.
+	 * Insert runtime type checks and enable assertions (checked mode).
 	 *
 	 * @since 1.0
 	 */
-	@Parameter(defaultValue = "${project.build.directory}/dart", required = true)
+	@Parameter(defaultValue = "false", property = "dart.checkedMode")
+	private boolean checkedMode;
+
+	/**
+	 * Display verbose information.
+	 *
+	 * @since 1.0.3
+	 */
+	@Parameter(defaultValue = "false", property = "dart.verbose")
+	private boolean verbose;
+
+	/**
+	 * Analyze all code. Without this option, the compiler only analyzes code that is reachable from [main].
+	 * This option is useful for finding errors in libraries,
+	 * but using it can result in bigger and slower output.
+	 *
+	 * @since 1.0.3
+	 */
+	@Parameter(defaultValue = "false", property = "dart.analyseAll")
+	private boolean analyseAll;
+
+	/**
+	 * Generate minified output.
+	 *
+	 * @since 1.0.3
+	 */
+	@Parameter(defaultValue = "false", property = "dart.minify")
+	private boolean minify;
+
+	/**
+	 * Do not display any warnings.
+	 *
+	 * @since 1.0.3
+	 */
+	@Parameter(defaultValue = "false", property = "dart.suppressWarnings")
+	private boolean suppressWarnings;
+
+	/**
+	 * Add colors to diagnostic messages.
+	 *
+	 * @since 1.0.3
+	 */
+	@Parameter(defaultValue = "false", property = "dart.diagnosticColors")
+	private boolean diagnosticColors;
+
+	/**
+	 * The directory to place the js files after compiling.
+	 * <p/>
+	 * If not specified the default is 'target/dart'.
+	 *
+	 * @since 1.0
+	 */
+	@Parameter(defaultValue = "${project.build.directory}/dart", required = true, property = "dart.outputDirectory")
 	private File outputDirectory;
+
+	/**
+	 * Where to find packages, that is, "package:..." imports.
+	 * <p/>
+	 * If not specified the default is 'target/dependency/packages'.
+	 *
+	 * @since 1.0.3
+	 */
+	@Parameter(defaultValue = "${basedir}/packages", required = true,
+			property = "dart.packageRoot")
+	//TODO pub does not support other location for pubspec.yaml will be supported in al later version
+	//defaultValue = "${project.build.directory}/dependency/packages"
+	private String packageRoot;
 
 	/**
 	 * A list of inclusion filters for the dart2js compiler.
@@ -79,7 +193,7 @@ public class Dart2JsMojo
 	 * @since 1.0
 	 */
 	@Parameter
-	private Set<String> includes = Collections.singleton("**/*.dart");
+	private Set<String> includes = new HashSet<String>();
 
 	/**
 	 * A list of exclusion filters for the dart2js compiler.
@@ -90,16 +204,10 @@ public class Dart2JsMojo
 	private final Set<String> excludes = new HashSet<String>();
 
 	/**
-	 * Insert runtime type checks and enable assertions (checked mode).
-	 *
-	 * @since 1.0
-	 */
-	@Parameter(defaultValue = "false", property = "dart.checkedMode")
-	private boolean checkedMode;
-
-	/**
 	 * Sets the granularity in milliseconds of the last modification
 	 * date for testing whether a dart source needs recompilation.
+	 *
+	 * @since 1.0
 	 */
 	@Parameter(property = "lastModGranularityMs", defaultValue = "0")
 	private int staleMillis;
@@ -107,18 +215,27 @@ public class Dart2JsMojo
 	public void execute()
 			throws MojoExecutionException {
 		if (isSkip()) {
-			getLog().info("skipping execute as per configuraion");
+			getLog().info("skipping execute as per configuration");
 			return;
 		}
 
-		String compilerPath = null;
+		processPubDependencies();
+
+		processDart2Js();
+	}
+
+	private void processDart2Js() throws MojoExecutionException {
+		String dart2jsPath = null;
 		try {
-			compilerPath = generateDartExecutable();
+			checkAndDownloadDartSDK();
+			dart2jsPath = getDart2JsExecutable().getAbsolutePath();
 		} catch (final Exception e) {
 			throw new MojoExecutionException("Unable to download dart vm", e);
 		}
 
-		getLog().debug("Using compiler '" + compilerPath + "'.");
+		if (getLog().isDebugEnabled()) {
+			getLog().debug("Using dart2js '" + dart2jsPath + "'.");
+		}
 
 		final List<String> compileSourceRoots = removeEmptyCompileSourceRoots(getCompileSourceRoots());
 
@@ -136,13 +253,35 @@ public class Dart2JsMojo
 		final StreamConsumer output = new WriterStreamConsumer(new OutputStreamWriter(System.out));
 		final StreamConsumer error = new WriterStreamConsumer(new OutputStreamWriter(System.err));
 
-		final Commandline cl = new Commandline(compilerPath);
+		final Commandline cl = new Commandline(dart2jsPath);
 
 		final List<String> arguments = new ArrayList<String>();
 
 		if (checkedMode) {
 			arguments.add(ARGUMENT_CECKED_MODE);
 		}
+
+		if (verbose) {
+			arguments.add(ARGUMENT_VERBOSE);
+		}
+
+		if (analyseAll) {
+			arguments.add(ARGUMENT_ANALYSE_ALL);
+		}
+
+		if (minify) {
+			arguments.add(ARGUMENT_MINIFY);
+		}
+
+		if (suppressWarnings) {
+			arguments.add(ARGUMENT_SUPPRESS_WARNINGS);
+		}
+
+		if (diagnosticColors) {
+			arguments.add(ARGUMENT_DIAGNOSTIC_COLORS);
+		}
+
+		arguments.add(ARGUMENT_PACKAGE_ROOT + packageRoot);
 
 		final Set<File> staleDartSources =
 				computeStaleSources(getSourceInclusionScanner(staleMillis));
@@ -187,7 +326,12 @@ public class Dart2JsMojo
 					dartOutputFile.getParentFile().mkdirs();
 				}
 				final int returnValue = CommandLineUtils.executeCommandLine(cl, output, error);
-				getLog().debug("dart2js returncode: " + returnValue);
+				if (getLog().isDebugEnabled()) {
+					getLog().debug("dart2js returncode: " + returnValue);
+				}
+				if (returnValue != 0) {
+					throw new MojoExecutionException("Dart2Js returned error code " + returnValue);
+				}
 			} catch (final CommandLineException e) {
 				getLog().debug("dart2js error: ", e);
 			}
@@ -268,14 +412,14 @@ public class Dart2JsMojo
 				"") + ".js";
 
 		String dartOutputFileRelativeToBasedir = null;
-		for (final String compileSourceRoot : compileSourceRoots) {
-			final String compileSourceRootRelativeToBasedir =
-					new File(compileSourceRoot).getAbsolutePath().replace(baseDirAbsolutePath, "");
-			if (dartSourceFileRelativeToBasedir.startsWith(compileSourceRootRelativeToBasedir)) {
-				dartOutputFileRelativeToBasedir = dartSourceFileRelativeToBasedir.replace(
-						compileSourceRootRelativeToBasedir, "");
+		for (final String compileSourceRoot : getCompileSourceRoots()) {
+
+			if (dartSourceFileAbsolutePath.startsWith(compileSourceRoot)) {
+				dartOutputFileRelativeToBasedir = dartSourceFileAbsolutePath.replace(compileSourceRoot, "");
+				dartOutputFileRelativeToBasedir += ".js";
 				break;
 			}
+
 		}
 
 		final String dartOutputFile = outputDirectory.getAbsolutePath() + dartOutputFileRelativeToBasedir;
@@ -320,7 +464,7 @@ public class Dart2JsMojo
 
 	public Set<String> getIncludes() {
 		if (includes.isEmpty()) {
-			return Collections.singleton("**/.dart");
+			return Collections.singleton("**/*.dart");
 		}
 		return includes;
 	}
