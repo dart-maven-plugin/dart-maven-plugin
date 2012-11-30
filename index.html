@@ -41,7 +41,9 @@
 
 <ul>
 <li>
-<code>dart:dart2js</code> Goal which compile dart files to javascript.</li>
+<code>dart:pub</code> Goal to invoke pub the dart package manager.</li>
+<li>
+<code>dart:dart2js</code> Goal to compile dart files to javascript.</li>
 <li>
 <code>dart:help</code>  Display help information on maven-dart-plugin. Call mvn dart:help -Ddetail=true -Dgoal= to display parameter details.</li>
 </ul><h2>Usage</h2>
@@ -51,34 +53,11 @@
 <p>More configuration details:</p>
 
 <h3>
-<code>dart:dart2js</code> Goal which compile dart files to javascript.</h3>
+<code>dart:dart2js</code> Goal to compile dart files to javascript.</h3>
 
-<ul>
-<li>
-<code>checkedMode (Default: false)</code> Insert runtime type checks and enable assertions (checked mode).</li>
-<li>
-<code>dartOutputDirectory</code> The directory for downloading the dart SDK.</li>
-<li>
-<code>dartServerUrl</code> The base URL for Downloading the dart SDK from</li>
-<li>
-<code>dartVersion</code>  The Version of the dart SDK</li>
-<li>
-<code>excludes</code> A list of exclusion filters for the dart2js compiler.</li>
-<li>
-<code>executable</code> provide a dart2js executable</li>
-<li>
-<code>includes</code> A list of inclusion filters for the dart2js compiler.</li>
-<li>
-<code>outputDirectory</code> The directory to place the js files after compiling.</li>
-<li>
-<code>serverId</code> settings.xml's server id for the URL. This is used when wagon needs extra authentication information.</li>
-<li>
-<code>skip (Default: false)</code> Skip the execution of dart2js.</li>
-<li>
-<code>skipVM (Default: false)</code> Skip downloading dart VM.</li>
-<li>
-<code>staleMillis (Default: 0)</code> Sets the granularity in milliseconds of the last modification date for testing whether a dart source needs recompilation.</li>
-</ul><h2>Example</h2>
+<p>Please use mvn dart:help for more information.</p>
+
+<h2>Example</h2>
 
 <p>An example can be found in the example folder in the git repository.</p>
 
@@ -89,6 +68,12 @@
 <h2>Authors and Contributors</h2>
 
 <p>Daniel Zwicker (<a href="https://github.com/dzwicker" class="user-mention">@dzwicker</a>) founded the project on GitHub.</p>
+
+<h3>Comitter</h3>
+
+<ul>
+<li><a href="https://github.com/youngm" class="user-mention">@youngm</a></li>
+</ul>
       </section>
     </div>
 
