@@ -16,6 +16,10 @@ The dart2js goal uses the dart2js compiler from the dart project to compile any 
 
 More configuration details:
 
+### `dart:pub` Goal to invoke pub the dart package manager.
+
+Please use mvn dart:help for more information.
+
 ### `dart:dart2js` Goal to compile dart files to javascript. 
 
 Please use mvn dart:help for more information.
