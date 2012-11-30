@@ -378,6 +378,10 @@ public abstract class AbstractDartSDKMojo extends AbstractDartMojo {
 		return new File(dartHome, "dart-sdk/bin/dart2js" + (OsUtil.isWindows() ? ".bat" : ""));
 	}
 
+	protected File getDartHome() {
+		return dartHome;
+	}
+
 	protected String getDartVersion() {
 		return dartVersion;
 	}
