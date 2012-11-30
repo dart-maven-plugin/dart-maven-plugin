@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="war" name="dart-maven-plugin-example:war">
+    <output-path>$PROJECT_DIR$/example/target</output-path>
+    <root id="archive" name="dart-maven-plugin-example-0.0.1-SNAPSHOT.war">
+      <element id="artifact" artifact-name="dart-maven-plugin-example:war exploded" />
+    </root>
+  </artifact>
+</component>
