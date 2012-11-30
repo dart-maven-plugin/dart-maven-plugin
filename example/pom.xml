@@ -42,10 +42,9 @@
             <plugin>
                 <groupId>com.google.dart</groupId>
                 <artifactId>dart-maven-plugin</artifactId>
-                <version>1.0.3-SNAPSHOT</version>
+                <version>1.0.4-SNAPSHOT</version>
                 <configuration>
                     <checkedMode>true</checkedMode>
-                    <dartVersion>15355</dartVersion>
                 </configuration>
                 <executions>
                     <execution>
