@@ -16,9 +16,15 @@ package com.google.dart;
  */
 
 import java.io.File;
+import java.io.IOException;
 import java.io.OutputStreamWriter;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
@@ -28,10 +34,12 @@ import org.codehaus.plexus.compiler.util.scan.SourceInclusionScanner;
 import org.codehaus.plexus.compiler.util.scan.StaleSourceScanner;
 import org.codehaus.plexus.compiler.util.scan.mapping.SourceMapping;
 import org.codehaus.plexus.compiler.util.scan.mapping.SuffixMapping;
-import org.codehaus.plexus.util.cli.*;
+import org.codehaus.plexus.util.cli.Commandline;
+import org.codehaus.plexus.util.cli.StreamConsumer;
+import org.codehaus.plexus.util.cli.WriterStreamConsumer;
 
 /**
- * Goal which compile dart files to javascript.
+ * Goal to compile dart files to javascript.
  *
  * @author Daniel Zwicker
  */
