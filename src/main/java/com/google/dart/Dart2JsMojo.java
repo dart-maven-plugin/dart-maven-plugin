@@ -108,7 +108,7 @@ public class Dart2JsMojo
 	 * @since 1.0
 	 */
 	@Parameter(defaultValue = "false", property = "dart.skip")
-	private boolean skip;
+	private boolean skipDart2js;
 
 	/**
 	 * Insert runtime type checks and enable assertions (checked mode).
@@ -212,8 +212,8 @@ public class Dart2JsMojo
 
 	public void execute()
 			throws MojoExecutionException {
-		if (isSkip()) {
-			getLog().info("skipping execute as per configuration");
+		if (isSkipDart2Js()) {
+			getLog().info("skipping dart2js execution");
 			return;
 		}
 
@@ -228,7 +228,7 @@ public class Dart2JsMojo
 			checkAndDownloadDartSDK();
 			dart2jsPath = getDart2JsExecutable().getAbsolutePath();
 		} catch (final Exception e) {
-			throw new MojoExecutionException("Unable to download dart vm", e);
+			throw new MojoExecutionException("Unable to download dart SDK", e);
 		}
 
 		if (getLog().isDebugEnabled()) {
