@@ -6,6 +6,7 @@ The Dart Maven Plugin provides integration of Dart into a maven build process.
 
 The Dart Plugin has one goal (besides the help goal). It is already bound to his proper phase within the Maven Lifecycle (compile) and is therefore, automatically executed during his respective phase.
 
+* `dart:pub` Goal to invoke pub the dart package manager.
 * `dart:dart2js` Goal to compile dart files to javascript.
 * `dart:help`  Display help information on maven-dart-plugin. Call mvn dart:help -Ddetail=true -Dgoal=<goal-name> to display parameter details.
 
