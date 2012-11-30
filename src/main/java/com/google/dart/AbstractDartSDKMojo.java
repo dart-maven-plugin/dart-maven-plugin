@@ -339,17 +339,16 @@ public abstract class AbstractDartSDKMojo extends AbstractDartMojo {
 	}
 
 	private String resolveVersion() throws FileNotFoundException, JSONException, ParseException, WagonException {
-		if (dartVersion != null && !dartVersion.isEmpty() && !dartVersion.equals("latest")) {
-			return dartVersion;
+		if (dartVersion == null || dartVersion.isEmpty() || dartVersion.equals("latest")) {
+			downloadVersionInformation("");
+
+			final File dartVersionFile = new File(dependencyOutputDirectory, "VERSION");
+			final JSONObject dartVersionInformation = readDartVersionJson(dartVersionFile);
+			long dartVersionDownloaded = readDartVersion(dartVersionInformation);
+
+			dartVersion = Long.toString(dartVersionDownloaded);
 		}
-
-		downloadVersionInformation("");
-
-		final File dartVersionFile = new File(dependencyOutputDirectory, "VERSION");
-		final JSONObject dartVersionInformation = readDartVersionJson(dartVersionFile);
-		long dartVersionDownloaded = readDartVersion(dartVersionInformation);
-
-		return Long.toString(dartVersionDownloaded);
+		return dartVersion;
 	}
 
 	private String classifier() {
