@@ -103,16 +103,6 @@ public class Dart2JsMojo
 	private static final String[] EMPTY_STRING_ARRAY = {};
 
 	/**
-	 * The source directories containing the dart sources to be compiled.
-	 * <p/>
-	 * If not specified the default is 'src/main/dart'.
-	 *
-	 * @since 1.0
-	 */
-	@Parameter
-	private List<String> compileSourceRoots = new ArrayList<String>();
-
-	/**
 	 * Skip the execution of dart2js.
 	 *
 	 * @since 1.0
@@ -373,30 +363,6 @@ public class Dart2JsMojo
 
 	protected int getStaleMillis() {
 		return staleMillis;
-	}
-
-	protected List<String> getCompileSourceRoots() {
-		if (compileSourceRoots.isEmpty()) {
-			return Collections.singletonList(getBasedir() + "/src/main/dart");
-		}
-		return compileSourceRoots;
-	}
-
-	/**
-	 * @todo also in ant plugin. This should be resolved at some point so that it does not need to
-	 * be calculated continuously - or should the plugins accept empty source roots as is?
-	 */
-	private static List<String> removeEmptyCompileSourceRoots(final List<String> compileSourceRootsList) {
-		final List<String> newCompileSourceRootsList = new ArrayList<String>();
-		if (compileSourceRootsList != null) {
-			// copy as I may be modifying it
-			for (final String srcDir : compileSourceRootsList) {
-				if (!newCompileSourceRootsList.contains(srcDir) && new File(srcDir).exists()) {
-					newCompileSourceRootsList.add(srcDir);
-				}
-			}
-		}
-		return newCompileSourceRootsList;
 	}
 
 	private void checkAndCreateOutputDirectory() throws MojoExecutionException {
