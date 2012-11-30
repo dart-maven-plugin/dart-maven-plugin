@@ -11,6 +11,7 @@
           <option name="goals">
             <list>
               <option value="dart:pub" />
+              <option value="-X" />
             </list>
           </option>
           <option name="profilesMap">
