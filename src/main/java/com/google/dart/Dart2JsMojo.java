@@ -37,7 +37,7 @@ import org.codehaus.plexus.util.cli.*;
  */
 @Mojo(name = "dart2js", defaultPhase = LifecyclePhase.COMPILE)
 public class Dart2JsMojo
-		extends AbstractDartSDKMojo {
+		extends PubMojo {
 
 	private final static String ARGUMENT_CECKED_MODE = "-c";
 
@@ -175,11 +175,14 @@ public class Dart2JsMojo
 	/**
 	 * Where to find packages, that is, "package:..." imports.
 	 * <p/>
-	 * If not specified the default is 'packages'.
+	 * If not specified the default is 'target/dependency/packages'.
 	 *
 	 * @since 1.0.3
 	 */
-	@Parameter(defaultValue = "${basedir}/packages", required = true, property = "dart.packageRoot")
+	@Parameter(defaultValue = "${basedir}/packages", required = true,
+			property = "dart.packageRoot")
+	//TODO pub does not support other location for pubspec.yaml will be supported in al later version
+	//defaultValue = "${project.build.directory}/dependency/packages"
 	private String packageRoot;
 
 	/**
@@ -212,19 +215,27 @@ public class Dart2JsMojo
 	public void execute()
 			throws MojoExecutionException {
 		if (isSkip()) {
-			getLog().info("skipping execute as per configuraion");
+			getLog().info("skipping execute as per configuration");
 			return;
 		}
 
-		String compilerPath = null;
+		processPubDependencies();
+
+		processDart2Js();
+	}
+
+	private void processDart2Js() throws MojoExecutionException {
+		String dart2jsPath = null;
 		try {
 			checkAndDownloadDartSDK();
-			compilerPath = getDart2JsExecutable().getAbsolutePath();
+			dart2jsPath = getDart2JsExecutable().getAbsolutePath();
 		} catch (final Exception e) {
 			throw new MojoExecutionException("Unable to download dart vm", e);
 		}
 
-		getLog().debug("Using compiler '" + compilerPath + "'.");
+		if (getLog().isDebugEnabled()) {
+			getLog().debug("Using dart2js '" + dart2jsPath + "'.");
+		}
 
 		final List<String> compileSourceRoots = removeEmptyCompileSourceRoots(getCompileSourceRoots());
 
@@ -242,7 +253,7 @@ public class Dart2JsMojo
 		final StreamConsumer output = new WriterStreamConsumer(new OutputStreamWriter(System.out));
 		final StreamConsumer error = new WriterStreamConsumer(new OutputStreamWriter(System.err));
 
-		final Commandline cl = new Commandline(compilerPath);
+		final Commandline cl = new Commandline(dart2jsPath);
 
 		final List<String> arguments = new ArrayList<String>();
 
@@ -315,10 +326,12 @@ public class Dart2JsMojo
 					dartOutputFile.getParentFile().mkdirs();
 				}
 				final int returnValue = CommandLineUtils.executeCommandLine(cl, output, error);
+				if (getLog().isDebugEnabled()) {
+					getLog().debug("dart2js returncode: " + returnValue);
+				}
 				if (returnValue != 0) {
 					throw new MojoExecutionException("Dart2Js returned error code " + returnValue);
 				}
-				getLog().debug("dart2js returncode: " + returnValue);
 			} catch (final CommandLineException e) {
 				getLog().debug("dart2js error: ", e);
 			}
