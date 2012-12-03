@@ -75,7 +75,7 @@ public class PubMojo extends AbstractDartSDKMojo {
 
 		try {
 			for (final File dartPackageRoot : dartPackageRoots) {
-				getLog().info("Run pub for package root: " + relativePackageRoot(dartPackageRoot));
+				getLog().info("Run pub for package root: " + relativePath(dartPackageRoot));
 				cl.setWorkingDirectory(dartPackageRoot);
 				if (getLog().isDebugEnabled()) {
 					getLog().debug("Execute pub command: " + cl.toString());
@@ -144,21 +144,21 @@ public class PubMojo extends AbstractDartSDKMojo {
 		return dartPackageRoots;
 	}
 
-	private void logDartPackageRoots(final Set<File> dartPackageRoots) {
+	protected void logDartPackageRoots(final Set<File> dartPackageRoots) {
 		getLog().info("");
 		final StringBuilder builder = new StringBuilder();
 		builder.append("Found package roots:\n");
 		for (final File dartPackageRoot : dartPackageRoots) {
 			builder.append("\t");
-			builder.append(relativePackageRoot(dartPackageRoot));
+			builder.append(relativePath(dartPackageRoot));
 			builder.append("\n");
 		}
 		getLog().info(builder.toString());
 		getLog().info("");
 	}
 
-	private String relativePackageRoot(final File dartPackageRoot) {
-		return dartPackageRoot.getAbsolutePath().replace(getBasedir() + "/", "");
+	protected String relativePath(final File absolutePath) {
+		return absolutePath.getAbsolutePath().replace(getBasedir() + "/", "");
 	}
 
 	private File getPubExecutable() {

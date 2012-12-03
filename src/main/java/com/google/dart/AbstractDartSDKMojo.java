@@ -42,7 +42,7 @@ public abstract class AbstractDartSDKMojo extends AbstractDartMojo {
 	/**
 	 * Skip downloading dart VM.
 	 *
-	 * @since 1.0.4
+	 * @since 1.1
 	 */
 	@Parameter(defaultValue = "false", property = "dart.skipSDKDownload")
 	private boolean skipSDKDownload;
