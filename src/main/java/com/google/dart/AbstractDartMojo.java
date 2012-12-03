@@ -1,7 +1,10 @@
 package com.google.dart;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.plugins.annotations.Parameter;
@@ -33,6 +36,16 @@ public abstract class AbstractDartMojo extends AbstractDeployMojo {
 	@Parameter(defaultValue = "${settings}", readonly = true)
 	private Settings settings;
 
+	/**
+	 * The source directories containing the dart sources to be compiled.
+	 * <p/>
+	 * If not specified the default is 'src/main/dart'.
+	 *
+	 * @since 1.0
+	 */
+	@Parameter
+	private List<String> compileSourceRoots = new ArrayList<String>();
+
 	protected Collection<File> resolve(final Artifact artifact) throws DependencyResolutionException {
 		if (getLog().isDebugEnabled()) {
 			getLog().debug("Resolve artifact '" + artifact + "'");
@@ -63,5 +76,12 @@ public abstract class AbstractDartMojo extends AbstractDeployMojo {
 
 	protected Settings getSettings() {
 		return settings;
+	}
+
+	protected List<String> getCompileSourceRoots() {
+		if (compileSourceRoots.isEmpty()) {
+			return Collections.singletonList(getBasedir() + "/src/main/dart");
+		}
+		return compileSourceRoots;
 	}
 }

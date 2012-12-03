@@ -42,10 +42,10 @@ public abstract class AbstractDartSDKMojo extends AbstractDartMojo {
 	/**
 	 * Skip downloading dart VM.
 	 *
-	 * @since 1.0
+	 * @since 1.1
 	 */
-	@Parameter(defaultValue = "false", property = "dart.skipVM")
-	private boolean skipVM;
+	@Parameter(defaultValue = "false", property = "dart.skipSDKDownload")
+	private boolean skipSDKDownload;
 
 	/**
 	 * provide a dart home
@@ -61,7 +61,7 @@ public abstract class AbstractDartSDKMojo extends AbstractDartMojo {
 	 * @since 1.0
 	 */
 	@Parameter(property = "dart.stripVersion", defaultValue = "false")
-	protected boolean stripVersion = false;
+	private boolean stripVersion = false;
 
 	/**
 	 * Default location used for mojo unless overridden in ArtifactItem
@@ -69,7 +69,7 @@ public abstract class AbstractDartSDKMojo extends AbstractDartMojo {
 	 * @since 1.0
 	 */
 	@Parameter(defaultValue = "${project.build.directory}/dependency", required = true)
-	protected File dependencyOutputDirectory;
+	private File dependencyOutputDirectory;
 
 	/**
 	 * Place each artifact in the same directory layout as a default repository.
@@ -78,7 +78,7 @@ public abstract class AbstractDartSDKMojo extends AbstractDartMojo {
 	 * @since 1.0.2
 	 */
 	@Parameter(property = "dart.useRepositoryLayout", defaultValue = "false")
-	protected boolean useRepositoryLayout;
+	private boolean useRepositoryLayout;
 
 	/**
 	 * Place each type of file in a separate subdirectory. (example
@@ -87,7 +87,7 @@ public abstract class AbstractDartSDKMojo extends AbstractDartMojo {
 	 * @since 1.0.2
 	 */
 	@Parameter(property = "dart.useSubDirectoryPerType", defaultValue = "false")
-	protected boolean useSubDirectoryPerType;
+	private boolean useSubDirectoryPerType;
 
 	/**
 	 * Place each file in a separate subdirectory. (example
@@ -96,7 +96,7 @@ public abstract class AbstractDartSDKMojo extends AbstractDartMojo {
 	 * @since 1.0.2
 	 */
 	@Parameter(property = "dart.useSubDirectoryPerArtifact", defaultValue = "false")
-	protected boolean useSubDirectoryPerArtifact;
+	private boolean useSubDirectoryPerArtifact;
 
 	/**
 	 * Directory to store flag files after unpack
@@ -152,26 +152,26 @@ public abstract class AbstractDartSDKMojo extends AbstractDartMojo {
 		}
 
 		if (getLog().isDebugEnabled()) {
-			getLog().debug("Check for dartVM.");
+			getLog().debug("Check for dart-sdk.");
 		}
 
-		Artifact dartVMArtifact = createArtifact();
-		DefaultFileMarkerHandler handler = new DefaultFileMarkerHandler(dartVMArtifact, this.markersDirectory);
+		Artifact dartSDKArtifact = createArtifact();
+		DefaultFileMarkerHandler handler = new DefaultFileMarkerHandler(dartSDKArtifact, this.markersDirectory);
 
 		final File destDir = DependencyUtil.getFormattedOutputDirectory(useSubDirectoryPerType,
 				useSubDirectoryPerArtifact, useRepositoryLayout,
-				stripVersion, dependencyOutputDirectory, dartVMArtifact);
+				stripVersion, dependencyOutputDirectory, dartSDKArtifact);
 		if (!handler.isMarkerSet()) {
 			File zip;
 			try {
-				zip = resolveZip(dartVMArtifact);
+				zip = resolveZip(dartSDKArtifact);
 			} catch (DependencyResolutionException e) {
 				if (getLog().isDebugEnabled()) {
-					getLog().debug("Unable to resolve dartVM in maven repositories.");
+					getLog().debug("Unable to resolve dart-sdk in maven repositories.");
 					getLog().debug(e);
 				}
-				downloadFromGoogle(dartVMArtifact);
-				zip = resolveZip(dartVMArtifact);
+				downloadFromGoogle(dartSDKArtifact);
+				zip = resolveZip(dartSDKArtifact);
 			}
 
 			unpack(zip, destDir);
@@ -183,9 +183,9 @@ public abstract class AbstractDartSDKMojo extends AbstractDartMojo {
 		checkDart2Js();
 	}
 
-	private File resolveZip(final Artifact dartVMArtifact) throws RepositoryException {
+	private File resolveZip(final Artifact dartSDKArtifact) throws RepositoryException {
 		final File zip;
-		Collection<File> zips = resolve(dartVMArtifact);
+		Collection<File> zips = resolve(dartSDKArtifact);
 		if (zips.size() != 1) {
 			throw new RepositoryException("Only one artifact for dart-sdk expected.");
 		}
@@ -242,21 +242,21 @@ public abstract class AbstractDartSDKMojo extends AbstractDartMojo {
 		getLog().info(msg.toString());
 	}
 
-	private void downloadFromGoogle(final Artifact dartVMArtifact)
+	private void downloadFromGoogle(final Artifact dartSDKArtifact)
 			throws FileNotFoundException, JSONException, WagonException, DeploymentException, MojoExecutionException,
 			MojoFailureException, ParseException {
 		final File dartVersionFile = new File(dependencyOutputDirectory, "VERSION");
 		if (dartVersionFile.exists()) {
 
-			if (!skipVM) {
+			if (!skipSDKDownload) {
 
 				final JSONObject dartVersionInformation = readDartVersionJson(dartVersionFile);
 				if (dartVersion.equals("latest")) {
-					deployDartToRepository(dartVMArtifact);
+					deployDartToRepository(dartSDKArtifact);
 				} else {
 					final long dartVersionPresent = readDartVersion(dartVersionInformation);
 					if (dartVersionPresent != Long.parseLong(dartVersion)) {
-						deployDartToRepository(dartVMArtifact);
+						deployDartToRepository(dartSDKArtifact);
 					}
 				}
 			}
@@ -264,7 +264,7 @@ public abstract class AbstractDartSDKMojo extends AbstractDartMojo {
 			if (!dependencyOutputDirectory.exists()) {
 				dependencyOutputDirectory.mkdirs();
 			}
-			deployDartToRepository(dartVMArtifact);
+			deployDartToRepository(dartSDKArtifact);
 		}
 	}
 
@@ -339,17 +339,16 @@ public abstract class AbstractDartSDKMojo extends AbstractDartMojo {
 	}
 
 	private String resolveVersion() throws FileNotFoundException, JSONException, ParseException, WagonException {
-		if (dartVersion != null && !dartVersion.isEmpty() && !dartVersion.equals("latest")) {
-			return dartVersion;
+		if (dartVersion == null || dartVersion.isEmpty() || dartVersion.equals("latest")) {
+			downloadVersionInformation("");
+
+			final File dartVersionFile = new File(dependencyOutputDirectory, "VERSION");
+			final JSONObject dartVersionInformation = readDartVersionJson(dartVersionFile);
+			long dartVersionDownloaded = readDartVersion(dartVersionInformation);
+
+			dartVersion = Long.toString(dartVersionDownloaded);
 		}
-
-		downloadVersionInformation("");
-
-		final File dartVersionFile = new File(dependencyOutputDirectory, "VERSION");
-		final JSONObject dartVersionInformation = readDartVersionJson(dartVersionFile);
-		long dartVersionDownloaded = readDartVersion(dartVersionInformation);
-
-		return Long.toString(dartVersionDownloaded);
+		return dartVersion;
 	}
 
 	private String classifier() {
@@ -370,8 +369,8 @@ public abstract class AbstractDartSDKMojo extends AbstractDartMojo {
 		return classifier;
 	}
 
-	protected boolean isSkipVM() {
-		return skipVM;
+	protected boolean isSkipSDKDownload() {
+		return skipSDKDownload;
 	}
 
 	protected File getDart2JsExecutable() {

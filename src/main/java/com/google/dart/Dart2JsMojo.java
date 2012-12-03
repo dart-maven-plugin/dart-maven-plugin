@@ -16,9 +16,13 @@ package com.google.dart;
  */
 
 import java.io.File;
+import java.io.IOException;
 import java.io.OutputStreamWriter;
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
@@ -28,10 +32,17 @@ import org.codehaus.plexus.compiler.util.scan.SourceInclusionScanner;
 import org.codehaus.plexus.compiler.util.scan.StaleSourceScanner;
 import org.codehaus.plexus.compiler.util.scan.mapping.SourceMapping;
 import org.codehaus.plexus.compiler.util.scan.mapping.SuffixMapping;
-import org.codehaus.plexus.util.cli.*;
+import org.codehaus.plexus.util.cli.Arg;
+import org.codehaus.plexus.util.cli.CommandLineException;
+import org.codehaus.plexus.util.cli.CommandLineUtils;
+import org.codehaus.plexus.util.cli.Commandline;
+import org.codehaus.plexus.util.cli.StreamConsumer;
+import org.codehaus.plexus.util.cli.WriterStreamConsumer;
+
+import com.google.common.collect.ImmutableSet;
 
 /**
- * Goal which compile dart files to javascript.
+ * Goal to compile dart files to javascript.
  *
  * @author Daniel Zwicker
  */
@@ -54,13 +65,6 @@ public class Dart2JsMojo
 	 * @since 1.0.3
 	 */
 	private final static String ARGUMENT_VERBOSE = "-v";
-
-	/**
-	 * Where to find packages, that is, "package:..." imports.
-	 *
-	 * @since 1.0.3
-	 */
-	private final static String ARGUMENT_PACKAGE_ROOT = "-p";
 
 	/**
 	 * Analyze all code. Without this option, the compiler only analyzes code that is reachable from [main].
@@ -95,22 +99,12 @@ public class Dart2JsMojo
 	private static final String[] EMPTY_STRING_ARRAY = {};
 
 	/**
-	 * The source directories containing the dart sources to be compiled.
-	 * <p/>
-	 * If not specified the default is 'src/main/dart'.
-	 *
-	 * @since 1.0
-	 */
-	@Parameter
-	private List<String> compileSourceRoots = new ArrayList<String>();
-
-	/**
 	 * Skip the execution of dart2js.
 	 *
-	 * @since 1.0
+	 * @since 1.1
 	 */
 	@Parameter(defaultValue = "false", property = "dart.skip")
-	private boolean skip;
+	private boolean skipDart2Js;
 
 	/**
 	 * Insert runtime type checks and enable assertions (checked mode).
@@ -163,6 +157,14 @@ public class Dart2JsMojo
 	private boolean diagnosticColors;
 
 	/**
+	 * Force compilation of all files.
+	 *
+	 * @since 1.1
+	 */
+	@Parameter(defaultValue = "true", property = "dart.force")
+	private boolean force;
+
+	/**
 	 * The directory to place the js files after compiling.
 	 * <p/>
 	 * If not specified the default is 'target/dart'.
@@ -173,22 +175,9 @@ public class Dart2JsMojo
 	private File outputDirectory;
 
 	/**
-	 * Where to find packages, that is, "package:..." imports.
-	 * <p/>
-	 * If not specified the default is 'target/dependency/packages'.
-	 *
-	 * @since 1.0.3
-	 */
-	@Parameter(defaultValue = "${basedir}/packages", required = true,
-			property = "dart.packageRoot")
-	//TODO pub does not support other location for pubspec.yaml will be supported in al later version
-	//defaultValue = "${project.build.directory}/dependency/packages"
-	private String packageRoot;
-
-	/**
 	 * A list of inclusion filters for the dart2js compiler.
 	 * <p/>
-	 * If not specified the default is '**&#47;*.dart'
+	 * If not specified the default is 'web&#47;**&#47;*.dart'
 	 *
 	 * @since 1.0
 	 */
@@ -197,6 +186,8 @@ public class Dart2JsMojo
 
 	/**
 	 * A list of exclusion filters for the dart2js compiler.
+	 * <p/>
+	 * If not specified the default is 'web&#47;**&#47;packages&#47;**'
 	 *
 	 * @since 1.0
 	 */
@@ -214,88 +205,31 @@ public class Dart2JsMojo
 
 	public void execute()
 			throws MojoExecutionException {
-		if (isSkip()) {
-			getLog().info("skipping execute as per configuration");
+		if (isSkipDart2Js()) {
+			getLog().info("skipping dart2js execution");
 			return;
 		}
 
-		processPubDependencies();
-
-		processDart2Js();
+		final Set<File> dartPackageRoots = findDartPackageRoots();
+		processPubDependencies(dartPackageRoots);
+		processDart2Js(dartPackageRoots);
 	}
 
-	private void processDart2Js() throws MojoExecutionException {
-		String dart2jsPath = null;
-		try {
-			checkAndDownloadDartSDK();
-			dart2jsPath = getDart2JsExecutable().getAbsolutePath();
-		} catch (final Exception e) {
-			throw new MojoExecutionException("Unable to download dart vm", e);
+	private void processDart2Js(final Set<File> dartPackageRoots) throws MojoExecutionException {
+
+		final Commandline cl = createBaseCommandline();
+
+		if (isForce()) {
+			clearOutputDirectory();
 		}
-
-		if (getLog().isDebugEnabled()) {
-			getLog().debug("Using dart2js '" + dart2jsPath + "'.");
-		}
-
-		final List<String> compileSourceRoots = removeEmptyCompileSourceRoots(getCompileSourceRoots());
-
-		if (compileSourceRoots.isEmpty()) {
-			getLog().info("No sources to compile");
-
-			return;
-		}
-
-		if (getLog().isDebugEnabled()) {
-			getLog().debug("Source directories: " + compileSourceRoots.toString().replace(',', '\n'));
-			getLog().debug("Output directory: " + getOutputDirectory());
-		}
-
-		final StreamConsumer output = new WriterStreamConsumer(new OutputStreamWriter(System.out));
-		final StreamConsumer error = new WriterStreamConsumer(new OutputStreamWriter(System.err));
-
-		final Commandline cl = new Commandline(dart2jsPath);
-
-		final List<String> arguments = new ArrayList<String>();
-
-		if (checkedMode) {
-			arguments.add(ARGUMENT_CECKED_MODE);
-		}
-
-		if (verbose) {
-			arguments.add(ARGUMENT_VERBOSE);
-		}
-
-		if (analyseAll) {
-			arguments.add(ARGUMENT_ANALYSE_ALL);
-		}
-
-		if (minify) {
-			arguments.add(ARGUMENT_MINIFY);
-		}
-
-		if (suppressWarnings) {
-			arguments.add(ARGUMENT_SUPPRESS_WARNINGS);
-		}
-
-		if (diagnosticColors) {
-			arguments.add(ARGUMENT_DIAGNOSTIC_COLORS);
-		}
-
-		arguments.add(ARGUMENT_PACKAGE_ROOT + packageRoot);
 
 		final Set<File> staleDartSources =
-				computeStaleSources(getSourceInclusionScanner(staleMillis));
+				computeStaleSources(dartPackageRoots, getSourceInclusionScanner());
 
 		if (getLog().isDebugEnabled()) {
-			getLog().debug("Source roots:");
-
-			for (final String root : getCompileSourceRoots()) {
-				getLog().debug(" " + root);
-			}
-
 			getLog().debug("staleMillis: " + staleMillis);
 			getLog().debug("basedir: " + getBasedir());
-			getLog().debug("dependencyOutputDirectory: " + outputDirectory);
+			getLog().debug("outputDirectory: " + outputDirectory);
 
 			getLog().debug("Source includes:");
 
@@ -311,23 +245,35 @@ public class Dart2JsMojo
 
 		checkAndCreateOutputDirectory();
 
+		final Arg outPutFileArg = cl.createArg();
+		final Arg dartFileArg = cl.createArg();
+
+		final StreamConsumer output = new WriterStreamConsumer(new OutputStreamWriter(System.out));
+		final StreamConsumer error = new WriterStreamConsumer(new OutputStreamWriter(System.err));
+
 		for (final File dartSourceFile : staleDartSources) {
 			try {
-				final List<String> compilerArguments = new ArrayList<String>(arguments);
-				final File dartOutputFile = createOutputFileArgument(compilerArguments, dartSourceFile);
-				createDartfileArgument(compilerArguments, dartSourceFile);
+				final File dartOutputFile = createOutputFileArgument(outPutFileArg, dartSourceFile);
+				createDartfileArgument(dartFileArg, dartSourceFile);
 
-				cl.clearArgs();
-				cl.addArguments(compilerArguments.toArray(EMPTY_STRING_ARRAY));
-
-				getLog().debug(cl.toString());
+				if (getLog().isDebugEnabled()) {
+					getLog().debug(cl.toString());
+				}
 				if (!dartOutputFile.getParentFile().exists()) {
-					getLog().debug("Create directory " + dartOutputFile.getParentFile().getAbsolutePath());
+					if (getLog().isDebugEnabled()) {
+						getLog().debug("Create directory " + dartOutputFile.getParentFile().getAbsolutePath());
+					}
 					dartOutputFile.getParentFile().mkdirs();
 				}
-				final int returnValue = CommandLineUtils.executeCommandLine(cl, output, error);
+
 				if (getLog().isDebugEnabled()) {
-					getLog().debug("dart2js returncode: " + returnValue);
+					getLog().debug(cl.toString());
+				}
+
+				final int returnValue = CommandLineUtils.executeCommandLine(cl, output, error);
+
+				if (getLog().isDebugEnabled()) {
+					getLog().debug("dart2js return code: " + returnValue);
 				}
 				if (returnValue != 0) {
 					throw new MojoExecutionException("Dart2Js returned error code " + returnValue);
@@ -341,71 +287,94 @@ public class Dart2JsMojo
 			getLog().info("Nothing to compile - all dart javascripts are up to date");
 		} else {
 			getLog().info(
-					"Compiling " + staleDartSources.size() + " dart file" + (staleDartSources.size() == 1 ? "" : "s")
+					"Compiling " + staleDartSources.size() + " dart file" + (staleDartSources.size() == 1 ? ""
+							: "s")
 							+ " to " + outputDirectory.getAbsolutePath());
 		}
 		getLog().info("");
 	}
 
-	protected boolean isSkip() {
-		return skip;
-	}
+	private Commandline createBaseCommandline() throws MojoExecutionException {
 
-	protected File getOutputDirectory() {
-		return outputDirectory;
-	}
-
-	protected Set<String> getExcludes() {
-		return excludes;
-	}
-
-	protected boolean isCheckedMode() {
-		return checkedMode;
-	}
-
-	protected int getStaleMillis() {
-		return staleMillis;
-	}
-
-	protected List<String> getCompileSourceRoots() {
-		if (compileSourceRoots.isEmpty()) {
-			return Collections.singletonList(getBasedir() + "/src/main/dart");
+		String dart2jsPath = null;
+		try {
+			checkAndDownloadDartSDK();
+			dart2jsPath = getDart2JsExecutable().getAbsolutePath();
+		} catch (final Exception e) {
+			throw new MojoExecutionException("Unable to download dart SDK", e);
 		}
-		return compileSourceRoots;
+
+		if (getLog().isDebugEnabled()) {
+			getLog().debug("Using dart2js '" + dart2jsPath + "'.");
+		}
+
+		if (getLog().isDebugEnabled()) {
+			getLog().debug("Source directories: " + getCompileSourceRoots().toString().replace(',', '\n'));
+			getLog().debug("Output directory: " + getOutputDirectory());
+		}
+
+		final Commandline cl = new Commandline(dart2jsPath);
+
+		if (isCheckedMode()) {
+			cl.createArg().setValue(ARGUMENT_CECKED_MODE);
+		}
+
+		if (isVerbose()) {
+			cl.createArg().setValue(ARGUMENT_VERBOSE);
+		}
+
+		if (isAnalyseAll()) {
+			cl.createArg().setValue(ARGUMENT_ANALYSE_ALL);
+		}
+
+		if (isMinify()) {
+			cl.createArg().setValue(ARGUMENT_MINIFY);
+		}
+
+		if (isSuppressWarnings()) {
+			cl.createArg().setValue(ARGUMENT_SUPPRESS_WARNINGS);
+		}
+
+		if (isDiagnosticColors()) {
+			cl.createArg().setValue(ARGUMENT_DIAGNOSTIC_COLORS);
+		}
+
+		if (getLog().isDebugEnabled()) {
+			getLog().debug("Base dart2js command: " + cl.toString());
+		}
+
+		return cl;
 	}
 
-	/**
-	 * @todo also in ant plugin. This should be resolved at some point so that it does not need to
-	 * be calculated continuously - or should the plugins accept empty source roots as is?
-	 */
-	private static List<String> removeEmptyCompileSourceRoots(final List<String> compileSourceRootsList) {
-		final List<String> newCompileSourceRootsList = new ArrayList<String>();
-		if (compileSourceRootsList != null) {
-			// copy as I may be modifying it
-			for (final String srcDir : compileSourceRootsList) {
-				if (!newCompileSourceRootsList.contains(srcDir) && new File(srcDir).exists()) {
-					newCompileSourceRootsList.add(srcDir);
-				}
+	private void clearOutputDirectory() throws MojoExecutionException {
+		try {
+			if (outputDirectory.exists()) {
+				FileUtils.cleanDirectory(outputDirectory);
+				getLog().info("Cleared all compiled dart-files.");
 			}
+		} catch (IOException e) {
+			getLog().debug("Unable to clear directory '" + outputDirectory.getAbsolutePath() + "'.", e);
+			throw new MojoExecutionException("Unable to clear directory '"
+					+ outputDirectory.getAbsolutePath() + "'.", e);
 		}
-		return newCompileSourceRootsList;
 	}
 
 	private void checkAndCreateOutputDirectory() throws MojoExecutionException {
 		if (!outputDirectory.exists()) {
 			outputDirectory.mkdirs();
 		} else if (!outputDirectory.isDirectory()) {
-			throw new MojoExecutionException("Fatal error compiling dart to js. Outputdirectory is not a directory");
+			throw new MojoExecutionException(
+					"Fatal error compiling dart to js. Outputdirectory is not a directory");
 		}
 	}
 
-	private void createDartfileArgument(final List<String> compilerArguments, final File dartSourceFile) {
+	private void createDartfileArgument(final Arg compilerArguments, final File dartSourceFile) {
 		final String dartSourceFileAbsolutePath = dartSourceFile.getAbsolutePath();
-		compilerArguments.add(dartSourceFileAbsolutePath);
-		getLog().debug("dartfile to compile: " + dartSourceFileAbsolutePath);
+		compilerArguments.setValue(dartSourceFileAbsolutePath);
+		getLog().info("dart2js for '" + relativePath(dartSourceFile) + "'");
 	}
 
-	private File createOutputFileArgument(final List<String> compilerArguments, final File dartSourceFile) {
+	private File createOutputFileArgument(final Arg outPutFileArg, final File dartSourceFile) {
 		final String dartSourceFileAbsolutePath = dartSourceFile.getAbsolutePath();
 		final String baseDirAbsolutePath = getBasedir().getAbsolutePath();
 		final String dartSourceFileRelativeToBasedir = dartSourceFileAbsolutePath.replace(baseDirAbsolutePath,
@@ -424,48 +393,101 @@ public class Dart2JsMojo
 
 		final String dartOutputFile = outputDirectory.getAbsolutePath() + dartOutputFileRelativeToBasedir;
 
-		getLog().debug(
-				"dart2js compiles dart-file '" + dartSourceFileAbsolutePath + "' to outputdirectory '"
-						+ dartOutputFile + "'");
-		compilerArguments.add(ARGUMENT_OUTPUT_FILE + dartOutputFile);
+		if (getLog().isDebugEnabled()) {
+			getLog().debug(
+					"dart2js compiles dart-file '" + dartSourceFileAbsolutePath + "' to outputdirectory '"
+							+ dartOutputFile + "'");
+		}
+		outPutFileArg.setValue(ARGUMENT_OUTPUT_FILE + dartOutputFile);
 		return new File(dartOutputFile);
 	}
 
-	private Set<File> computeStaleSources(final SourceInclusionScanner scanner)
+	private Set<File> computeStaleSources(final Set<File> packageRoots, final SourceInclusionScanner scanner)
 			throws MojoExecutionException {
 		final SourceMapping mapping = new SuffixMapping("dart", "dart.js");
-		final File outputDirectory = getOutputDirectory();
-
 		scanner.addSourceMapping(mapping);
 
 		final Set<File> staleSources = new HashSet<File>();
-
-		for (final String sourceRoot : getCompileSourceRoots()) {
-			final File rootFile = new File(sourceRoot);
-
-			if (!rootFile.isDirectory()) {
-				continue;
-			}
-
+		for (final File packageRoot : packageRoots) {
 			try {
-				staleSources.addAll(scanner.getIncludedSources(rootFile, outputDirectory));
+				final File packageOutputDirectory = getPackageOutputDirectory(packageRoot);
+				staleSources.addAll(scanner.getIncludedSources(packageRoot, packageOutputDirectory));
 			} catch (final InclusionScanException e) {
 				throw new MojoExecutionException(
-						"Error scanning source root: \'" + sourceRoot + "\' for stale files to recompile.", e);
+						"Error scanning source root: \'" + relativePath(packageRoot)
+								+ "\' for stale files to recompile.", e);
 			}
 		}
 
 		return staleSources;
 	}
 
-	private SourceInclusionScanner getSourceInclusionScanner(final int staleMillis) {
-		return new StaleSourceScanner(staleMillis, getIncludes(), getExcludes());
+	private File getPackageOutputDirectory(final File packageRoot) {
+		String packageRootOffset = packageRoot.getAbsolutePath();
+		for (final String compileSourceRoot : getCompileSourceRoots()) {
+			if (packageRootOffset.startsWith(compileSourceRoot)) {
+				packageRootOffset = packageRootOffset.replace(compileSourceRoot + "/", "");
+				break;
+			}
+		}
+		return new File(getOutputDirectory(), packageRootOffset);
+	}
+
+	private SourceInclusionScanner getSourceInclusionScanner() {
+		return new StaleSourceScanner(getStaleMillis(), getIncludes(), getExcludes());
 	}
 
 	public Set<String> getIncludes() {
 		if (includes.isEmpty()) {
-			return Collections.singleton("**/*.dart");
+			return ImmutableSet.copyOf(Arrays.asList(new String[] {"web/**/*.dart"}));
 		}
 		return includes;
+	}
+
+	protected Set<String> getExcludes() {
+		if (excludes.isEmpty()) {
+			return ImmutableSet.copyOf(Arrays.asList(new String[] {"web/**/packages/**"}));
+		}
+		return excludes;
+	}
+
+	protected boolean isSkipDart2Js() {
+		return skipDart2Js;
+	}
+
+	protected File getOutputDirectory() {
+		return outputDirectory;
+	}
+
+	protected boolean isCheckedMode() {
+		return checkedMode;
+	}
+
+	protected int getStaleMillis() {
+		return staleMillis;
+	}
+
+	protected boolean isVerbose() {
+		return verbose;
+	}
+
+	protected boolean isAnalyseAll() {
+		return analyseAll;
+	}
+
+	protected boolean isMinify() {
+		return minify;
+	}
+
+	protected boolean isSuppressWarnings() {
+		return suppressWarnings;
+	}
+
+	protected boolean isDiagnosticColors() {
+		return diagnosticColors;
+	}
+
+	protected boolean isForce() {
+		return force;
 	}
 }

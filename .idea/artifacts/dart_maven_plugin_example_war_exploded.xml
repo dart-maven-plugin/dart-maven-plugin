@@ -1,0 +1,13 @@
+<component name="ArtifactManager">
+  <artifact type="exploded-war" name="dart-maven-plugin-example:war exploded">
+    <output-path>$PROJECT_DIR$/example/target/dart-maven-plugin-example-0.0.1-SNAPSHOT</output-path>
+    <root id="root">
+      <element id="javaee-facet-resources" facet="dart-maven-plugin-example/web/Web" />
+      <element id="directory" name="WEB-INF">
+        <element id="directory" name="classes">
+          <element id="module-output" name="dart-maven-plugin-example" />
+        </element>
+      </element>
+    </root>
+  </artifact>
+</component>
