@@ -65,7 +65,8 @@ public class PubMojo extends AbstractDartSDKMojo {
 		final StreamConsumer output = new WriterStreamConsumer(new OutputStreamWriter(System.out));
 		final StreamConsumer error = new WriterStreamConsumer(new OutputStreamWriter(System.err));
 
-		final Commandline cl = new Commandline(pubPath);
+		final Commandline cl = new Commandline();
+		cl.setExecutable(pubPath);
 
 		cl.createArg().setValue(update ? COMMAND_UPDATE : COMMAND_INSTALL);
 

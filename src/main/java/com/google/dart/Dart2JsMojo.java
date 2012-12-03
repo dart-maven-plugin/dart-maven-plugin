@@ -313,7 +313,8 @@ public class Dart2JsMojo
 			getLog().debug("Output directory: " + getOutputDirectory());
 		}
 
-		final Commandline cl = new Commandline(dart2jsPath);
+		final Commandline cl = new Commandline();
+		cl.setExecutable(dart2jsPath);
 
 		if (isCheckedMode()) {
 			cl.createArg().setValue(ARGUMENT_CECKED_MODE);
