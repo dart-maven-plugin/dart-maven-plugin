@@ -45,6 +45,8 @@
                 <version>1.1.2-SNAPSHOT</version>
                 <configuration>
                     <checkedMode>true</checkedMode>
+                    <dartVersion>15699</dartVersion>
+                    <skipSDKDownload>true</skipSDKDownload>
                 </configuration>
                 <executions>
                     <execution>

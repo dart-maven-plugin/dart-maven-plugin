@@ -126,7 +126,7 @@ public abstract class AbstractDartSDKMojo extends AbstractDartMojo {
 	/**
 	 * The base URL for Downloading the dart SDK from
 	 */
-	@Parameter(defaultValue = "https://gsdview.appspot.com/dart-editor-archive-integration", required = true)
+	@Parameter(defaultValue = "https://storage.cloud.google.com/dart-editor-archive-integration", required = true)
 	private String dartServerUrl;
 
 	@Component

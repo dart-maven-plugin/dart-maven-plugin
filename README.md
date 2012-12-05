@@ -2,6 +2,21 @@
 
 The Dart Maven Plugin provides integration of Dart into a maven build process.
 
+#Important!!!!
+
+Dart has moved to a GoogleStore server. This Server needs authentication to download the new SDK. The Plugin is not capabel to login in. So you have to download and install the SDK to yout maven repository manual.
+
+##Example upload command
+
+`mvn deploy:deploy-file -DrepositoryId=in2ex-public-releases -DgeneratePom=true -DgroupId=com.google.dart -DartifactId=dart-sdk -D version=15699 -Dpackaging=zip -Dclassifier=macos-64 -Dfile=dartsdk-macos-64.zip -Durl=http://dev.in2experience.com/nexus/content/repositories/public-release`
+
+##Please add the following configuration to your pom
+
+* `<dartVersion>YOUR DOWNLOADED VERSION</dartVersion>`
+* `<skipSDKDownload>true</skipSDKDownload>`
+
+Or look inside the example.
+
 ##Goals Overview
 
 The Dart Plugin has one goal (besides the help goal). It is already bound to his proper phase within the Maven Lifecycle (compile) and is therefore, automatically executed during his respective phase.
