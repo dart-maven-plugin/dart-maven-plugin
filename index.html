@@ -35,6 +35,17 @@
 
 <p>The Dart Maven Plugin provides integration of Dart into a maven build process.</p>
 
+<h1>Important!!!!</h1>
+
+<p>Dart has moved to a GoogleStore server. This Server needs authentication to download the new SDK. The Plugin is not capabel to login in. So you have to download and install the SDK to yout maven repository manual.</p>
+
+<h2>Please add the following configuration to your pom</h2>
+
+<ul>
+<li><code>&lt;dartVersion&gt;YOUR DOWNLOADED VERSION&lt;/dartVersion&gt;</code></li>
+<li><code>&lt;skipSDKDownload&gt;true&lt;/skipSDKDownload&gt;</code></li>
+</ul><p>Or look inside the example.</p>
+
 <h2>Goals Overview</h2>
 
 <p>The Dart Plugin has one goal (besides the help goal). It is already bound to his proper phase within the Maven Lifecycle (compile) and is therefore, automatically executed during his respective phase.</p>
