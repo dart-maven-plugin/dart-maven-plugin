@@ -4,6 +4,7 @@
     <entry_points version="2.0" />
   </component>
   <component name="FrameworkDetectionExcludesConfiguration">
+    <file type="web" url="file://$PROJECT_DIR$/dart-maven-plugin-example" />
     <file type="web" url="file://$PROJECT_DIR$/example" />
   </component>
   <component name="MavenProjectsManager">
@@ -11,6 +12,7 @@
       <list>
         <option value="$PROJECT_DIR$/pom.xml" />
         <option value="$PROJECT_DIR$/example/pom.xml" />
+        <option value="$PROJECT_DIR$/dart-maven-plugin-example/pom.xml" />
       </list>
     </option>
   </component>
@@ -55,21 +57,5 @@
     <output url="file://$PROJECT_DIR$/out" />
   </component>
   <component name="WebServicesPlugin" addRequiredLibraries="true" />
-  <component name="masterDetails">
-    <states>
-      <state key="ProjectJDKs.UI">
-        <settings>
-          <last-edited>1.6</last-edited>
-          <splitter-proportions>
-            <option name="proportions">
-              <list>
-                <option value="0.2" />
-              </list>
-            </option>
-          </splitter-proportions>
-        </settings>
-      </state>
-    </states>
-  </component>
 </project>
 

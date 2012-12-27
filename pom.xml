@@ -23,6 +23,12 @@
         </developer>
     </developers>
 
+    <contributors>
+        <contributor>
+            <name>youngm@github</name>
+        </contributor>
+    </contributors>
+
     <scm>
         <connection>scm:git:https://github.com/dzwicker/dart-maven-plugin.git</connection>
         <developerConnection>scm:git:https://github.com/dzwicker/dart-maven-plugin.git</developerConnection>
@@ -57,6 +63,10 @@
         <mavenVersion>3.0.4</mavenVersion>
         <mavenPluginPluginVersion>3.1</mavenPluginPluginVersion>
     </properties>
+
+    <modules>
+        <!--<module>dart-maven-plugin-example</module>-->
+    </modules>
 
     <build>
         <pluginManagement>

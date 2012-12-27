@@ -3,7 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/dart-maven-plugin.iml" filepath="$PROJECT_DIR$/dart-maven-plugin.iml" />
-      <module fileurl="file://$PROJECT_DIR$/example/dart-maven-plugin-example.iml" filepath="$PROJECT_DIR$/example/dart-maven-plugin-example.iml" />
+      <module fileurl="file://$PROJECT_DIR$/dart-maven-plugin-example/dart-maven-plugin-example.iml" filepath="$PROJECT_DIR$/dart-maven-plugin-example/dart-maven-plugin-example.iml" />
     </modules>
   </component>
 </project>
