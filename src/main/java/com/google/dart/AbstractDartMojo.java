@@ -80,7 +80,16 @@ public abstract class AbstractDartMojo extends AbstractDeployMojo {
 
 	protected List<String> getCompileSourceRoots() {
 		if (compileSourceRoots.isEmpty()) {
-			return Collections.singletonList(getBasedir() + "/src/main/dart");
+			
+			final StringBuilder defaultPath = new StringBuilder(); // /src/main/dart or \src\main\dart
+			defaultPath.append(File.separator);
+			defaultPath.append("src");
+			defaultPath.append(File.separator);
+			defaultPath.append("main");
+			defaultPath.append(File.separator);
+			defaultPath.append("dart"); 
+			
+			return Collections.singletonList(getBasedir() + defaultPath.toString());
 		}
 		return compileSourceRoots;
 	}
