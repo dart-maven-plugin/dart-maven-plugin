@@ -4,7 +4,9 @@ The Dart Maven Plugin provides integration of Dart into a maven build process.
 
 #Important!!!!
 
-Dart has moved to a GoogleStore server. This Server needs authentication to download the new SDK. The Plugin is not capabel to login in. So you have to download and install the SDK to yout maven repository manual.
+Dart has moved to a GoogleStore server. This Server needs authentication to download the new SDK. 
+The Plugin is not capable to login in. So you have to download and install the SDK to your maven repository manually, or use the `dartSdk` configuration setting 
+to let maven know where the dart sdk has been unzipped to.
 
 ##Example upload command
 
@@ -14,6 +16,11 @@ Dart has moved to a GoogleStore server. This Server needs authentication to down
 
 * `<dartVersion>YOUR DOWNLOADED VERSION</dartVersion>`
 * `<skipSDKDownload>true</skipSDKDownload>`
+
+Or
+ 
+* `<dartSdk>${env.DART_SDK}</dartSdk>` 
+to use a pre-unzipped Dart SDK.  
 
 Or look inside the example.
 
