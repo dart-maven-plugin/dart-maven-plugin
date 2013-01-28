@@ -54,6 +54,17 @@ public abstract class AbstractDartSDKMojo extends AbstractDartMojo {
 	 */
 	@Parameter
 	private File dartHome;
+	
+	
+	/**
+	 * use the dartSdk to provide a pre-installed dart SDK, for example, 
+	 * from a DART_SDK environment variable, which points to
+	 * /home/user/dart/dart_sdk/ or c:\work\dart\dart_sdk\ 
+	 * 
+	 * @since 1.1.3
+	 */
+	@Parameter
+	private File dartSdk;
 
 	/**
 	 * Strip artifact version during copy
@@ -146,41 +157,45 @@ public abstract class AbstractDartSDKMojo extends AbstractDartMojo {
 	protected void checkAndDownloadDartSDK()
 			throws RepositoryException, MojoExecutionException, NoSuchArchiverException, WagonException,
 			FileNotFoundException, ParseException, JSONException, MojoFailureException {
+		if (dartSdk != null && dartSdk.exists()) {
+			checkDartSdk(); // the dartSdk can be used to set the dartHome property.
+			getLog().info("DartSdk configured to " + dartSdk);
+		}
+		
 		if (dartHome != null && dartHome.exists()) {
 			checkDart2Js();
 			getLog().info("DartHome configured to " + dartHome);
 		}
-
-		if (getLog().isDebugEnabled()) {
-			getLog().debug("Check for dart-sdk.");
-		}
-
-		Artifact dartSDKArtifact = createArtifact();
-		DefaultFileMarkerHandler handler = new DefaultFileMarkerHandler(dartSDKArtifact, this.markersDirectory);
-
-		final File destDir = DependencyUtil.getFormattedOutputDirectory(useSubDirectoryPerType,
-				useSubDirectoryPerArtifact, useRepositoryLayout,
-				stripVersion, dependencyOutputDirectory, dartSDKArtifact);
-		if (!handler.isMarkerSet()) {
-			File zip;
-			try {
-				zip = resolveZip(dartSDKArtifact);
-			} catch (DependencyResolutionException e) {
-				if (getLog().isDebugEnabled()) {
-					getLog().debug("Unable to resolve dart-sdk in maven repositories.");
-					getLog().debug(e);
+		
+		if (dartSdk == null) {
+			// dartSdk was not specified, so download it from google, and install it in local repo
+			Artifact dartSDKArtifact = createArtifact();
+			DefaultFileMarkerHandler handler = new DefaultFileMarkerHandler(dartSDKArtifact, this.markersDirectory);
+	
+			final File destDir = DependencyUtil.getFormattedOutputDirectory(useSubDirectoryPerType,
+					useSubDirectoryPerArtifact, useRepositoryLayout,
+					stripVersion, dependencyOutputDirectory, dartSDKArtifact);
+			if (!handler.isMarkerSet()) {
+				File zip;
+				try {
+					zip = resolveZip(dartSDKArtifact);
+				} catch (DependencyResolutionException e) {
+					if (getLog().isDebugEnabled()) {
+						getLog().debug("Unable to resolve dart-sdk in maven repositories.");
+						getLog().debug(e);
+					}
+					downloadFromGoogle(dartSDKArtifact);
+					zip = resolveZip(dartSDKArtifact);
 				}
-				downloadFromGoogle(dartSDKArtifact);
-				zip = resolveZip(dartSDKArtifact);
+	
+				unpack(zip, destDir);
+				handler.setMarker();
 			}
-
-			unpack(zip, destDir);
-			handler.setMarker();
+	
+			dartHome = destDir;
+	
+			checkDart2Js();
 		}
-
-		dartHome = destDir;
-
-		checkDart2Js();
 	}
 
 	private File resolveZip(final Artifact dartSDKArtifact) throws RepositoryException {
@@ -322,11 +337,28 @@ public abstract class AbstractDartSDKMojo extends AbstractDartMojo {
 					+ dartHome.getAbsolutePath());
 		}
 	}
+	
+	/**
+	 * Override or initialize dartHome if it's not provided, but the SDK is provided.
+	 */
+	protected void checkDartSdk() {
+		if (dartSdk != null) {
+			if (!dartSdk.isDirectory()) {
+				throw new IllegalArgumentException("If DartSdk property is provided, it must be a folder. dartSdk=" 
+						+ dartSdk.getAbsolutePath());
+			}
+			else {
+				// override of initialize the DartHome to be the folder containing the dart sdk				
+				dartHome = dartSdk.getParentFile().getAbsoluteFile();
+			}
+		}
+	}
 
 	private void checkDartHome() {
 		if (dartHome == null) {
-			throw new NullPointerException("DartHome required. Configuration error for dartHome?");
+			throw new NullPointerException("DartHome or DartSdk required. Configuration error for dartHome?");
 		}
+		
 		if (!dartHome.isDirectory()) {
 			throw new IllegalArgumentException("DartHome required. Configuration error for dartHome? dartHome="
 					+ dartHome.getAbsolutePath());
