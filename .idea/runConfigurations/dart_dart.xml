@@ -1,0 +1,46 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="dart:dart" type="MavenRunConfiguration" factoryName="Maven">
+    <MavenSettings>
+      <option name="myGeneralSettings" />
+      <option name="myRunnerSettings" />
+      <option name="myRunnerParameters">
+        <MavenRunnerParameters>
+          <option name="profiles">
+            <set />
+          </option>
+          <option name="goals">
+            <list>
+              <option value="dart:dart" />
+              <option value="-X" />
+              <option value="-Dscript=/Users/daniel/In2Experience/extern/dart-maven-plugin/dart-maven-plugin-example/src/main/dart/rom/bin/bin.dart" />
+            </list>
+          </option>
+          <option name="profilesMap">
+            <map />
+          </option>
+          <option name="workingDirPath" value="$PROJECT_DIR$/dart-maven-plugin-example" />
+        </MavenRunnerParameters>
+      </option>
+    </MavenSettings>
+    <RunnerSettings RunnerId="Debug">
+      <option name="DEBUG_PORT" value="" />
+      <option name="TRANSPORT" value="0" />
+      <option name="LOCAL" value="true" />
+    </RunnerSettings>
+    <RunnerSettings RunnerId="JRebel Debug">
+      <option name="bootstrapPath" />
+      <option name="debugPort" value="" />
+      <option name="jrebelArgs" />
+      <option name="loggingEnabled" value="false" />
+      <option name="transport" value="0" />
+      <option name="useBootstrapDefaults" value="true" />
+      <option name="DEBUG_PORT" value="" />
+      <option name="TRANSPORT" value="0" />
+      <option name="LOCAL" value="true" />
+    </RunnerSettings>
+    <ConfigurationWrapper RunnerId="Debug" />
+    <method>
+      <option name="Maven.BeforeRunTask" enabled="true" file="$PROJECT_DIR$/pom.xml" goal="install" />
+    </method>
+  </configuration>
+</component>
