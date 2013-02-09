@@ -55,6 +55,7 @@
     </licenses>
 
     <properties>
+		<github.global.server>github</github.global.server>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <mavenVersion>3.0.4</mavenVersion>
         <mavenPluginPluginVersion>3.1</mavenPluginPluginVersion>
