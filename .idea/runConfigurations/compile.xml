@@ -16,7 +16,7 @@
           <option name="profilesMap">
             <map />
           </option>
-          <option name="workingDirPath" value="$PROJECT_DIR$/example" />
+          <option name="workingDirPath" value="$PROJECT_DIR$/dart-maven-plugin-example" />
         </MavenRunnerParameters>
       </option>
     </MavenSettings>

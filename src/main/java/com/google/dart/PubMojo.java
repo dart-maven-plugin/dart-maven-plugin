@@ -2,13 +2,8 @@ package com.google.dart;
 
 import java.io.File;
 import java.io.OutputStreamWriter;
-import java.util.Collection;
-import java.util.HashSet;
 import java.util.Set;
 
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.filefilter.DirectoryFileFilter;
-import org.apache.commons.io.filefilter.NameFileFilter;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Mojo;
@@ -27,7 +22,7 @@ import com.google.dart.util.OsUtil;
  * @author Daniel Zwicker
  */
 @Mojo(name = "pub")
-public class PubMojo extends AbstractDartSDKMojo {
+public class PubMojo extends AbstractDartMojo {
 
 	private final static String COMMAND_INSTALL = "install";
 
@@ -50,12 +45,8 @@ public class PubMojo extends AbstractDartSDKMojo {
 	protected void processPubDependencies(final Set<File> dartPackageRoots) throws MojoExecutionException {
 
 		String pubPath = null;
-		try {
-			checkAndDownloadDartSDK();
-			pubPath = getPubExecutable().getAbsolutePath();
-		} catch (final Exception e) {
-			throw new MojoExecutionException("Unable to download dart-sdk", e);
-		}
+		checkPub();
+		pubPath = getPubExecutable().getAbsolutePath();
 
 		if (getLog().isDebugEnabled()) {
 			getLog().debug("Using pub '" + pubPath + "'.");
@@ -96,74 +87,16 @@ public class PubMojo extends AbstractDartSDKMojo {
 		getLog().info("");
 	}
 
-	protected Set<File> findDartPackageRoots() throws MojoExecutionException {
-		final Set<File> dartPackageRoots = new HashSet<File>();
-		for (final String compileSourceRoot : getCompileSourceRoots()) {
-			final File directory = new File(compileSourceRoot);
-			if (!directory.exists()) {
-				throw new MojoExecutionException("Compiler-source-root '" + compileSourceRoot + "'  does not exist.");
-			}
-			if (!directory.isDirectory()) {
-				throw new MojoExecutionException(
-						"Compiler-source-root '" + compileSourceRoot + "'  must be a directory.");
-			}
-			if (!directory.canRead()) {
-				throw new MojoExecutionException("Compiler-source-root '" + compileSourceRoot + "'  must be readable.");
-			}
-			if (!directory.canWrite()) {
-				throw new MojoExecutionException("Compiler-source-root '" + compileSourceRoot + "'  must be writable.");
-			}
-
-			if (getLog().isDebugEnabled()) {
-				getLog().debug("Check compile-source-root '" + compileSourceRoot + "' for dart packages.");
-			}
-
-			final Collection<File> pubSpecs =
-					FileUtils.listFiles(directory, new NameFileFilter("pubspec.yaml"), DirectoryFileFilter.DIRECTORY);
-
-			if (getLog().isDebugEnabled()) {
-				getLog().debug("");
-				final StringBuilder builder = new StringBuilder();
-				builder.append("Found pubspec.yaml in ");
-				builder.append(compileSourceRoot);
-				builder.append(":\n");
-				for (final File pubSpec : pubSpecs) {
-					builder.append("\t");
-					builder.append(pubSpec.getAbsolutePath().replace(compileSourceRoot + "/", ""));
-					builder.append("\n");
-				}
-				getLog().debug(builder.toString());
-				getLog().debug("");
-			}
-
-			for (final File pubSpec : pubSpecs) {
-				final File dartPackageRoot = pubSpec.getParentFile();
-				dartPackageRoots.add(dartPackageRoot);
-			}
+	protected void checkPub() throws MojoExecutionException {
+		checkDartSdk();
+		if (!getPubExecutable().canExecute()) {
+			throw new MojoExecutionException("Pub not executable! Configuration error for dartSdk? dartSdk="
+					+ getDartSdk().getAbsolutePath());
 		}
-		logDartPackageRoots(dartPackageRoots);
-		return dartPackageRoots;
-	}
-
-	protected void logDartPackageRoots(final Set<File> dartPackageRoots) {
-		getLog().info("");
-		final StringBuilder builder = new StringBuilder();
-		builder.append("Found package roots:\n");
-		for (final File dartPackageRoot : dartPackageRoots) {
-			builder.append("\t");
-			builder.append(relativePath(dartPackageRoot));
-			builder.append("\n");
-		}
-		getLog().info(builder.toString());
-		getLog().info("");
-	}
-
-	protected String relativePath(final File absolutePath) {
-		return absolutePath.getAbsolutePath().replace(getBasedir() + "/", "");
 	}
 
 	private File getPubExecutable() {
-		return new File(getDartHome(), "dart-sdk/bin/pub" + (OsUtil.isWindows() ? ".bat" : ""));
+		return new File(getDartSdk(), "bin/pub" + (OsUtil.isWindows() ? ".bat" : ""));
 	}
 
 }

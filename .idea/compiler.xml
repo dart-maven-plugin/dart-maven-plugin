@@ -85,7 +85,7 @@
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
-      <module name="dart-maven-plugin" target="1.6" />
+      <module name="dart-maven-plugin" target="1.7" />
     </bytecodeTargetLevel>
   </component>
 </project>

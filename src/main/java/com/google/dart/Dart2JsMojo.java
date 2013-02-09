@@ -32,6 +32,7 @@ import org.codehaus.plexus.compiler.util.scan.SourceInclusionScanner;
 import org.codehaus.plexus.compiler.util.scan.StaleSourceScanner;
 import org.codehaus.plexus.compiler.util.scan.mapping.SourceMapping;
 import org.codehaus.plexus.compiler.util.scan.mapping.SuffixMapping;
+import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.cli.Arg;
 import org.codehaus.plexus.util.cli.CommandLineException;
 import org.codehaus.plexus.util.cli.CommandLineUtils;
@@ -40,6 +41,7 @@ import org.codehaus.plexus.util.cli.StreamConsumer;
 import org.codehaus.plexus.util.cli.WriterStreamConsumer;
 
 import com.google.common.collect.ImmutableSet;
+import com.google.dart.util.OsUtil;
 
 /**
  * Goal to compile dart files to javascript.
@@ -50,6 +52,11 @@ import com.google.common.collect.ImmutableSet;
 public class Dart2JsMojo
 		extends PubMojo {
 
+	/**
+	 * Where to find packages, that is, "package:..." imports.
+	 *
+	 * @since 2.0
+	 */
 	private final static String ARGUMENT_CECKED_MODE = "-c";
 
 	/**
@@ -58,6 +65,13 @@ public class Dart2JsMojo
 	 * @since 1.0
 	 */
 	private final static String ARGUMENT_OUTPUT_FILE = "-o";
+
+	/**
+	 * Where to find packages, that is, "package:..." imports.
+	 *
+	 * @since 2.0
+	 */
+	private final static String ARGUMENT_PACKAGE_PATH = "-p";
 
 	/**
 	 * Display verbose information.
@@ -155,6 +169,14 @@ public class Dart2JsMojo
 	 */
 	@Parameter(defaultValue = "false", property = "dart.diagnosticColors")
 	private boolean diagnosticColors;
+
+	/**
+	 * Where to find packages, that is, "package:..." imports.
+	 *
+	 * @since 2.0
+	 */
+	@Parameter(property = "dart.packagepath")
+	private String packagePath;
 
 	/**
 	 * Force compilation of all files.
@@ -297,12 +319,8 @@ public class Dart2JsMojo
 	private Commandline createBaseCommandline() throws MojoExecutionException {
 
 		String dart2jsPath = null;
-		try {
-			checkAndDownloadDartSDK();
-			dart2jsPath = getDart2JsExecutable().getAbsolutePath();
-		} catch (final Exception e) {
-			throw new MojoExecutionException("Unable to download dart SDK", e);
-		}
+		checkDart2Js();
+		dart2jsPath = getDart2JsExecutable().getAbsolutePath();
 
 		if (getLog().isDebugEnabled()) {
 			getLog().debug("Using dart2js '" + dart2jsPath + "'.");
@@ -340,11 +358,27 @@ public class Dart2JsMojo
 			cl.createArg().setValue(ARGUMENT_DIAGNOSTIC_COLORS);
 		}
 
+		if (isPackagePath()) {
+			cl.createArg().setValue(ARGUMENT_PACKAGE_PATH + packagePath);
+		}
+
 		if (getLog().isDebugEnabled()) {
 			getLog().debug("Base dart2js command: " + cl.toString());
 		}
 
 		return cl;
+	}
+
+	protected void checkDart2Js() {
+		checkDartSdk();
+		if (!getDart2JsExecutable().canExecute()) {
+			throw new IllegalArgumentException("Dart2js not executable! Configuration error for dartSdk? dartSdk="
+					+ getDartSdk().getAbsolutePath());
+		}
+	}
+
+	protected File getDart2JsExecutable() {
+		return new File(getDartSdk(), "bin/dart2js" + (OsUtil.isWindows() ? ".bat" : ""));
 	}
 
 	private void clearOutputDirectory() throws MojoExecutionException {
@@ -490,5 +524,9 @@ public class Dart2JsMojo
 
 	protected boolean isForce() {
 		return force;
+	}
+
+	protected boolean isPackagePath() {
+		return !StringUtils.isEmpty(packagePath);
 	}
 }
