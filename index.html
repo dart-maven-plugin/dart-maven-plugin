@@ -35,20 +35,10 @@
 
 <p>The Dart Maven Plugin provides integration of Dart into a maven build process.</p>
 
-<h1>Important!!!!</h1>
+<h1>Setup</h1>
 
-<p>Dart has moved to a GoogleStore server. This Server needs authentication to download the new SDK. The Plugin is not capabel to login in. So you have to download and install the SDK to yout maven repository manual.</p>
-
-<h2>Example upload command</h2>
-
-<p><code>mvn deploy:deploy-file -DrepositoryId=in2ex-public-releases -DgeneratePom=true -DgroupId=com.google.dart -DartifactId=dart-sdk -D version=15699 -Dpackaging=zip -Dclassifier=macos-64 -Dfile=dartsdk-macos-64.zip -Durl=http://dev.in2experience.com/nexus/content/repositories/public-release</code></p>
-
-<h2>Please add the following configuration to your pom</h2>
-
-<ul>
-<li><code>&lt;dartVersion&gt;YOUR DOWNLOADED VERSION&lt;/dartVersion&gt;</code></li>
-<li><code>&lt;skipSDKDownload&gt;true&lt;/skipSDKDownload&gt;</code></li>
-</ul><p>Or look inside the example.</p>
+<p>The plugin needs a dart-sdk installed on the system it should be executed. By default it will look for the environment variable DART_SDK. So please set this variable.
+It is possible to overwrite this in the plugin configuration section.</p>
 
 <h2>Goals Overview</h2>
 
@@ -68,18 +58,25 @@
 <p>More configuration details:</p>
 
 <h3>
-<code>dart:pub</code> Goal to invoke pub the dart package manager.</h3>
+<code>dart:dart</code> Goal to invoke the dart scripts.</h3>
 
-<p>Please use mvn dart:help for more information.</p>
+<h3>
+<code>dart:pub</code> Goal to invoke pub the dart package manager.</h3>
 
 <h3>
 <code>dart:dart2js</code> Goal to compile dart files to javascript.</h3>
+
+<h3>
+<code>dart:help</code> Display help information on dart-maven-plugin. Call mvn dart:help -Ddetail=true -Dgoal= to display parameter details.</h3>
+
+<h3>
+<code>dart:test</code> Goal to invoke the dart scripts.</h3>
 
 <p>Please use mvn dart:help for more information.</p>
 
 <h2>Example</h2>
 
-<p>An example can be found in the example folder in the git repository.</p>
+<p>An example can be found in the dart-maven-plugin-example folder inside the git repository.</p>
 
 <h2>Maven repository</h2>
 
@@ -92,7 +89,8 @@
 <h3>Comitter</h3>
 
 <ul>
-<li><a href="https://github.com/youngm" class="user-mention">@youngm</a></li>
+<li><p><a href="https://github.com/youngm" class="user-mention">@youngm</a></p></li>
+<li><p>Chris Buckett</p></li>
 </ul>
       </section>
     </div>
