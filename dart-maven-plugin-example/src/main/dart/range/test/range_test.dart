@@ -9,4 +9,7 @@ void main() {
   test("range() throws an exception when start > stop", () {
     expect(() => range(5, 2), throwsA(new isInstanceOf<ArgumentError>()));
   });
+//  test("fail test", () {
+  //    fail("Just fail");
+  //  });
 }

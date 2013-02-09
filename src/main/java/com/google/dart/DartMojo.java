@@ -68,7 +68,7 @@ public class DartMojo extends PubMojo {
 	 *
 	 * @since 2.0
 	 */
-	@Parameter(required = true, property = "script")
+	@Parameter(property = "script")
 	private File script;
 
 	/**
@@ -133,7 +133,19 @@ public class DartMojo extends PubMojo {
 
 	private void executeDart() throws MojoExecutionException {
 
-		final Commandline cl = createCommandline();
+		final Commandline cl = createBaseCommandline();
+
+		if (script == null) {
+			throw new NullPointerException("Script is required but is null.");
+		}
+		if (!script.exists() || !script.isFile()) {
+			throw new IllegalArgumentException("Script must be a file. scripte=" + script.getAbsolutePath());
+		}
+		if (script.canRead()) {
+			throw new IllegalArgumentException("Script must be a readable file. scripte=" + script.getAbsolutePath());
+		}
+
+		cl.createArg(true).setValue(script.getAbsolutePath());
 
 		final StreamConsumer output = new WriterStreamConsumer(new OutputStreamWriter(System.out));
 		final StreamConsumer error = new WriterStreamConsumer(new OutputStreamWriter(System.err));
@@ -156,7 +168,7 @@ public class DartMojo extends PubMojo {
 		getLog().info("");
 	}
 
-	private Commandline createCommandline() throws MojoExecutionException {
+	protected Commandline createBaseCommandline() throws MojoExecutionException {
 
 		checkDart();
 		String dartPath = getDartExecutable().getAbsolutePath();
@@ -167,8 +179,6 @@ public class DartMojo extends PubMojo {
 
 		final Commandline cl = new Commandline();
 		cl.setExecutable(dartPath);
-
-		cl.createArg().setValue(script.getAbsolutePath());
 
 		if (isCheckedMode()) {
 			cl.createArg().setValue(ARGUMENT_CECKED_MODE);

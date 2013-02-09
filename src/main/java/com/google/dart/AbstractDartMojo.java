@@ -54,7 +54,7 @@ public abstract class AbstractDartMojo extends AbstractMojo {
 	protected void checkDartSdk() {
 
 		if (getLog().isDebugEnabled()) {
-			getLog().debug("Check for DART_HOME.");
+			getLog().debug("Check for DART_SDK.");
 		}
 
 		if (dartSdk == null) {
@@ -79,15 +79,15 @@ public abstract class AbstractDartMojo extends AbstractMojo {
 
 	protected List<String> getCompileSourceRoots() {
 		if (compileSourceRoots.isEmpty()) {
-			
+
 			final StringBuilder defaultPath = new StringBuilder(); // /src/main/dart or \src\main\dart
 			defaultPath.append(File.separator);
 			defaultPath.append("src");
 			defaultPath.append(File.separator);
 			defaultPath.append("main");
 			defaultPath.append(File.separator);
-			defaultPath.append("dart"); 
-			
+			defaultPath.append("dart");
+
 			return Collections.singletonList(getBasedir() + defaultPath.toString());
 		}
 		return compileSourceRoots;
