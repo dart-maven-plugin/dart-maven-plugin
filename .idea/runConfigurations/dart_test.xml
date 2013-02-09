@@ -1,5 +1,5 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="compile" type="MavenRunConfiguration" factoryName="Maven">
+  <configuration default="false" name="dart:test" type="MavenRunConfiguration" factoryName="Maven">
     <MavenSettings>
       <option name="myGeneralSettings" />
       <option name="myRunnerSettings" />
@@ -10,7 +10,8 @@
           </option>
           <option name="goals">
             <list>
-              <option value="compile" />
+              <option value="dart:test" />
+              <option value="-X" />
             </list>
           </option>
           <option name="profilesMap">
@@ -20,6 +21,11 @@
         </MavenRunnerParameters>
       </option>
     </MavenSettings>
+    <RunnerSettings RunnerId="Debug">
+      <option name="DEBUG_PORT" value="" />
+      <option name="TRANSPORT" value="0" />
+      <option name="LOCAL" value="true" />
+    </RunnerSettings>
     <RunnerSettings RunnerId="JRebel Debug">
       <option name="bootstrapPath" />
       <option name="debugPort" value="" />
@@ -32,6 +38,8 @@
       <option name="LOCAL" value="true" />
     </RunnerSettings>
     <RunnerSettings RunnerId="Run" />
+    <ConfigurationWrapper RunnerId="Debug" />
+    <ConfigurationWrapper RunnerId="JRebel Debug" />
     <ConfigurationWrapper RunnerId="Run" />
     <method>
       <option name="Maven.BeforeRunTask" enabled="true" file="$PROJECT_DIR$/pom.xml" goal="install" />

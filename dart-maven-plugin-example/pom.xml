@@ -1,0 +1,62 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.google.dart</groupId>
+    <artifactId>dart-maven-plugin-example</artifactId>
+    <packaging>war</packaging>
+    <version>0.0.1-SNAPSHOT</version>
+
+    <distributionManagement>
+        <repository>
+            <id>in2ex-releases</id>
+            <name>In2Experience Repository</name>
+            <url>http://dev.in2experience.com/nexus/content/repositories/public-release/</url>
+            <uniqueVersion>true</uniqueVersion>
+        </repository>
+        <snapshotRepository>
+            <id>in2ex-snapshots</id>
+            <name>In2Experience Snapshot Repository</name>
+            <url>http://dev.in2experience.com/nexus/content/repositories/snapshots/</url>
+            <uniqueVersion>true</uniqueVersion>
+        </snapshotRepository>
+    </distributionManagement>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-war-plugin</artifactId>
+                <version>2.2</version>
+                <configuration>
+                    <webResources>
+                        <resource>
+                            <directory>src/main/dart</directory>
+                        </resource>
+                        <resource>
+                            <directory>target/dart</directory>
+                        </resource>
+                    </webResources>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>com.google.dart</groupId>
+                <artifactId>dart-maven-plugin</artifactId>
+                <version>2.0.0-SNAPSHOT</version>
+                <configuration>
+                    <checkedMode>true</checkedMode>
+                    <dartSdk>/Users/daniel/in2Experience/dart/dart-sdk</dartSdk>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>compile</id>
+                        <goals>
+                            <goal>dart2js</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>

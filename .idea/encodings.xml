@@ -2,6 +2,26 @@
 <project version="4">
   <component name="Encoding" useUTFGuessing="true" native2AsciiForPropertiesFiles="false">
     <file url="file://$PROJECT_DIR$" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/../surefire" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/../surefire/maven-failsafe-plugin" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/../surefire/maven-surefire-common" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/../surefire/maven-surefire-plugin" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/../surefire/maven-surefire-report-plugin" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/../surefire/surefire-api" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/../surefire/surefire-booter" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/../surefire/surefire-grouper" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/../surefire/surefire-integration-tests" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/../surefire/surefire-providers" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/../surefire/surefire-providers/common-junit3" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/../surefire/surefire-providers/common-junit4" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/../surefire/surefire-providers/common-junit48" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/../surefire/surefire-providers/surefire-junit3" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/../surefire/surefire-providers/surefire-junit4" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/../surefire/surefire-providers/surefire-junit47" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/../surefire/surefire-providers/surefire-testng" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/../surefire/surefire-providers/surefire-testng-utils" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/../surefire/surefire-setup-integration-tests" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/../surefire/surefire-shadefire" charset="UTF-8" />
   </component>
 </project>
 
