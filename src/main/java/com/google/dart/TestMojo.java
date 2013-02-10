@@ -67,6 +67,8 @@ public class TestMojo extends DartMojo {
 
 		final Set<File> testSources = computeTestToRun(dartPackageRoots);
 
+		System.out.println();
+		System.out.println();
 		for (final File dartTestFile : testSources) {
 			try {
 
@@ -79,6 +81,8 @@ public class TestMojo extends DartMojo {
 				}
 
 				final int returnValue = CommandLineUtils.executeCommandLine(cl, output, error);
+				System.out.println();
+				System.out.println();
 
 				if (getLog().isDebugEnabled()) {
 					getLog().debug("test return code: " + returnValue);
@@ -90,6 +94,8 @@ public class TestMojo extends DartMojo {
 				getLog().debug("test error: ", e);
 			}
 		}
+		System.out.println();
+		System.out.println();
 		if (testSources.isEmpty()) {
 			getLog().info("No tests to run.");
 		}

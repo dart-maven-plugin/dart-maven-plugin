@@ -151,7 +151,10 @@ public class DartMojo extends PubMojo {
 		final StreamConsumer error = new WriterStreamConsumer(new OutputStreamWriter(System.err));
 
 		getLog().info("Execute dart: " + cl.toString());
-		getLog().info("");
+
+		System.out.println();
+		System.out.println();
+
 		try {
 
 			final int returnValue = CommandLineUtils.executeCommandLine(cl, output, error);
@@ -165,7 +168,9 @@ public class DartMojo extends PubMojo {
 		} catch (final CommandLineException e) {
 			getLog().debug("dart error: ", e);
 		}
-		getLog().info("");
+
+		System.out.println();
+		System.out.println();
 	}
 
 	protected Commandline createBaseCommandline() throws MojoExecutionException {

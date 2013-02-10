@@ -65,6 +65,9 @@ public class PubMojo extends AbstractDartMojo {
 			getLog().debug("Base pub command: " + cl.toString());
 		}
 
+		System.out.println();
+		System.out.println();
+
 		try {
 			for (final File dartPackageRoot : dartPackageRoots) {
 				getLog().info("Run pub for package root: " + relativePath(dartPackageRoot));
@@ -84,7 +87,8 @@ public class PubMojo extends AbstractDartMojo {
 			throw new MojoExecutionException("Unable to execute pub", e);
 		}
 
-		getLog().info("");
+		System.out.println();
+		System.out.println();
 	}
 
 	protected void checkPub() throws MojoExecutionException {

@@ -273,6 +273,9 @@ public class Dart2JsMojo
 		final StreamConsumer output = new WriterStreamConsumer(new OutputStreamWriter(System.out));
 		final StreamConsumer error = new WriterStreamConsumer(new OutputStreamWriter(System.err));
 
+		System.out.println();
+		System.out.println();
+
 		for (final File dartSourceFile : staleDartSources) {
 			try {
 				final File dartOutputFile = createOutputFileArgument(outPutFileArg, dartSourceFile);
@@ -300,6 +303,10 @@ public class Dart2JsMojo
 				if (returnValue != 0) {
 					throw new MojoExecutionException("Dart2Js returned error code " + returnValue);
 				}
+
+				System.out.println();
+				System.out.println();
+
 			} catch (final CommandLineException e) {
 				getLog().debug("dart2js error: ", e);
 			}
@@ -313,7 +320,9 @@ public class Dart2JsMojo
 							: "s")
 							+ " to " + outputDirectory.getAbsolutePath());
 		}
-		getLog().info("");
+
+		System.out.println();
+		System.out.println();
 	}
 
 	private Commandline createBaseCommandline() throws MojoExecutionException {
