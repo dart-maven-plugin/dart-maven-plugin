@@ -48,15 +48,47 @@ public class TestMojo extends DartMojo {
 	@Parameter
 	private final Set<String> excludes = new HashSet<>();
 
+	/**
+	 * Set this to 'true' to skip running tests, but still compile them. Its use is NOT RECOMMENDED, but quite
+	 * convenient on occasion.
+	 *
+	 * @since 2.0
+	 */
+	@Parameter(property = "skipTests")
+	private boolean skipTests;
+
+	/**
+	 * Set this to "true" to cause a failure if there are no tests to run.
+	 *
+	 * @since 2.0
+	 */
+	@Parameter(property = "failIfNoTests", defaultValue = "false")
+	private boolean failIfNoTests;
+
+	/**
+	 * Set this to true to ignore a failure during testing. Its use is NOT RECOMMENDED, but quite convenient on
+	 * occasion.
+	 *
+	 * @since 2.0
+	 */
+	@Parameter(property = "maven.test.failure.ignore", defaultValue = "false")
+	private boolean testFailureIgnore;
+
 	@Override
 	public void execute() throws MojoExecutionException, MojoFailureException {
 
 		final Set<File> dartPackageRoots = findDartPackageRoots();
+
 		processPubDependencies(dartPackageRoots);
-		executeTests(dartPackageRoots);
+
+		if (isSkipTests()) {
+			getLog().info("Tests are skipped.");
+		} else {
+			executeTests(dartPackageRoots);
+		}
 	}
 
-	private void executeTests(final Set<File> dartPackageRoots) throws MojoExecutionException {
+	private void executeTests(final Set<File> dartPackageRoots) throws MojoExecutionException, MojoFailureException {
 
 		final Commandline cl = createBaseCommandline();
 
@@ -69,6 +101,9 @@ public class TestMojo extends DartMojo {
 
 		System.out.println();
 		System.out.println();
+
+		boolean fail = false;
+
 		for (final File dartTestFile : testSources) {
 			try {
 
@@ -87,20 +122,48 @@ public class TestMojo extends DartMojo {
 				if (getLog().isDebugEnabled()) {
 					getLog().debug("test return code: " + returnValue);
 				}
-				if (returnValue != 0) {
+				if (returnValue != 0 && returnValue != 255) {
 					throw new MojoExecutionException("Test fail returned error code " + returnValue);
+				} else if (returnValue != 255) {
+					fail = true;
 				}
+
 			} catch (final CommandLineException e) {
-				getLog().debug("test error: ", e);
+				getLog().error("error running tests: ", e);
+				fail = true;
 			}
 		}
+
+		reportExecution(testSources, fail);
+
 		System.out.println();
 		System.out.println();
+
+	}
+
+	private void reportExecution(final Set<File> testSources, final boolean fail) throws MojoFailureException {
+
+		String msg;
+
 		if (testSources.isEmpty()) {
-			getLog().info("No tests to run.");
+			if (isFailIfNoTests()) {
+				return;
+			}
+			// TODO: i18n
+			throw new MojoFailureException(
+					"No tests were executed!  (Set -DfailIfNoTests=false to ignore this error.)");
 		}
 
-		getLog().info("");
+		if (fail) {
+			// TODO: i18n
+			msg = "There are test failures.\n\nPlease refer to output for the individual test results.";
+
+			if (isTestFailureIgnore()) {
+				getLog().error(msg);
+			} else {
+				throw new MojoFailureException(msg);
+			}
+		}
 	}
 
 	public Set<String> getIncludes() {
@@ -165,5 +228,17 @@ public class TestMojo extends DartMojo {
 		}
 
 		return matchingSources;
+	}
+
+	public boolean isFailIfNoTests() {
+		return failIfNoTests;
+	}
+
+	public boolean isTestFailureIgnore() {
+		return testFailureIgnore;
+	}
+
+	public boolean isSkipTests() {
+		return skipTests;
 	}
 }
