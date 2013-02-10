@@ -123,6 +123,14 @@ public class DartMojo extends PubMojo {
 	@Parameter(property = "dart.useScriptSnapshot")
 	private String useScriptSnapshot;
 
+	/**
+	 * Set this to 'true' to skip running dart's packagemanager pub.
+	 *
+	 * @since 2.0
+	 */
+	@Parameter(defaultValue = "true", property = "dart.pup.skip")
+	private boolean skipPub;
+
 	@Override
 	public void execute() throws MojoExecutionException, MojoFailureException {
 
@@ -222,6 +230,11 @@ public class DartMojo extends PubMojo {
 
 	private File getDartExecutable() {
 		return new File(getDartSdk(), "bin/dart" + (OsUtil.isWindows() ? ".bat" : ""));
+	}
+
+	@Override
+	public boolean isPubSkipped() {
+		return skipPub;
 	}
 
 	protected boolean isCheckedMode() {

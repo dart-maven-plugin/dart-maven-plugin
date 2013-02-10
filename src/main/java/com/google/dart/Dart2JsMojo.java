@@ -225,6 +225,14 @@ public class Dart2JsMojo
 	@Parameter(property = "lastModGranularityMs", defaultValue = "0")
 	private int staleMillis;
 
+	/**
+	 * Set this to 'true' to skip running dart's packagemanager pub.
+	 *
+	 * @since 2.0
+	 */
+	@Parameter(defaultValue = "true", property = "dart.pup.skip")
+	private boolean skipPub;
+
 	public void execute()
 			throws MojoExecutionException {
 		if (isSkipDart2Js()) {
@@ -493,6 +501,11 @@ public class Dart2JsMojo
 			return ImmutableSet.copyOf(Arrays.asList(new String[] {"web/**/packages/**"}));
 		}
 		return excludes;
+	}
+
+	@Override
+	public boolean isPubSkipped() {
+		return skipPub;
 	}
 
 	protected boolean isSkipDart2Js() {

@@ -44,6 +44,10 @@ public class PubMojo extends AbstractDartMojo {
 
 	protected void processPubDependencies(final Set<File> dartPackageRoots) throws MojoExecutionException {
 
+		if (isPubSkipped()) {
+			getLog().info("Updating dependencies (pub packagemanager) is skipped.");
+			return;
+		}
 		String pubPath = null;
 		checkPub();
 		pubPath = getPubExecutable().getAbsolutePath();
@@ -103,4 +107,7 @@ public class PubMojo extends AbstractDartMojo {
 		return new File(getDartSdk(), "bin/pub" + (OsUtil.isWindows() ? ".bat" : ""));
 	}
 
+	public boolean isPubSkipped() {
+		return false;
+	}
 }
