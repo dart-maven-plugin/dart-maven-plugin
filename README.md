@@ -29,6 +29,10 @@ Please use mvn dart:help for more information.
 
 An example can be found in the dart-maven-plugin-example folder inside the git repository.
 
+##Maven repository
+
+The Dart Maven Plugin is deployed to the central repository.
+
 ## Authors and Contributors
 Daniel Zwicker (@dzwicker) founded the project on GitHub.
 
