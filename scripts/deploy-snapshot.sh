@@ -5,5 +5,6 @@
 script_dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 mvn -f $script_dir/../pom.xml  clean deploy
-
-read -p "Press [Enter] key to finish..."
+echo
+read -p "deploy finished press [Enter] key to finish..."
+echo

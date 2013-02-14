@@ -4,8 +4,7 @@
 
 script_dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
-mvn -f $script_dir/../pom.xml nexus:staging-close
-read -p "Press [Enter] key to go ahead..."
-
-mvn -f $script_dir/../pom.xml nexus:staging-promote
-read -p "Press [Enter] key to finish staging..."
+mvn -f $script_dir/../pom.xml nexus:staging-drop
+echo
+read -p "nexus:staging-drop finished press [Enter] key to finish..."
+echo
