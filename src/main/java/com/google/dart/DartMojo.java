@@ -128,7 +128,7 @@ public class DartMojo extends PubMojo {
 	 *
 	 * @since 2.0
 	 */
-	@Parameter(defaultValue = "true", property = "dart.pup.skip")
+	@Parameter(defaultValue = "false", property = "dart.pup.skip")
 	private boolean skipPub;
 
 	@Override

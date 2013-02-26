@@ -230,7 +230,7 @@ public class Dart2JsMojo
 	 *
 	 * @since 2.0
 	 */
-	@Parameter(defaultValue = "true", property = "dart.pup.skip")
+	@Parameter(defaultValue = "false", property = "dart.pup.skip")
 	private boolean skipPub;
 
 	public void execute()

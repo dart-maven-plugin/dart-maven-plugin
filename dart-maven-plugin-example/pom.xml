@@ -42,7 +42,7 @@
             <plugin>
                 <groupId>com.github.dzwicker.dart</groupId>
                 <artifactId>dart-maven-plugin</artifactId>
-                <version>2.0.1-SNAPSHOT</version>
+                <version>2.0.0</version>
                 <configuration>
                     <checkedMode>true</checkedMode>
                     <dartSdk>/Users/daniel/in2Experience/dart/dart-sdk</dartSdk>

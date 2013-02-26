@@ -3,9 +3,4 @@ pom.xml.releaseBackup
 release.properties
 .idea/libraries/Maven_*
 workspace.xml
-example/packages
-example/src/main/dart/rom/packages
-example/src/main/dart/seconde/packages
-example/src/main/dart/rom/pubspec.lock
-example/src/main/dart/seconde/pubspec.lock
-example/src/main/dart/seconde/web/packages
+packages
