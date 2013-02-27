@@ -37,7 +37,7 @@ public class DartMojo extends PubMojo {
 	 *
 	 * @since 2.0
 	 */
-	private final static String ARGUMENT_PACKAGE_PATH = "--package-root=";
+	protected final static String ARGUMENT_PACKAGE_PATH = "--package-root=";
 
 	/**
 	 * enables debugging and listens on specified port for debugger connections
@@ -85,7 +85,7 @@ public class DartMojo extends PubMojo {
 	 * @since 2.0
 	 */
 	@Parameter(property = "dart.packagepath")
-	private String packagePath;
+	protected String packagePath;
 
 	/**
 	 * enables debugging and listens on specified port for debugger connections
@@ -228,7 +228,7 @@ public class DartMojo extends PubMojo {
 		}
 	}
 
-	private File getDartExecutable() {
+	protected File getDartExecutable() {
 		return new File(getDartSdk(), "bin/dart" + (OsUtil.isWindows() ? ".bat" : ""));
 	}
 
