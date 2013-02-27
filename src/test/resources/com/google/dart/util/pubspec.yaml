@@ -1,0 +1,8 @@
+name: darterop
+description: A sample WebUI application
+dependencies:
+  browser: any
+  js: any
+  web_ui: any
+  piffle_core:
+    path: ../piffle_core

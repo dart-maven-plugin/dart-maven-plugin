@@ -11,6 +11,13 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+
+import com.google.common.base.Function;
+import com.google.common.base.Throwables;
+import com.google.common.collect.Collections2;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Maps;
+import com.google.dart.util.Pub;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.DirectoryFileFilter;
 import org.apache.commons.io.filefilter.NameFileFilter;
@@ -109,6 +116,25 @@ public abstract class AbstractDartMojo extends AbstractMojo {
 			throw new IllegalStateException("Unable to read dart version. Configuration error for dartSdk?", e);
 		}
 	}
+
+    protected Map<String, Pub> getDartPackagesByName() throws  MojoExecutionException {
+        return Maps.uniqueIndex(
+            Collections2.transform( findDartPackageRoots(), new Function<File, Pub>(){
+                @Override
+                public Pub apply(File file) {
+                    try {
+                        return new Pub( new File(file, "pubspec.yaml"));
+                    } catch (FileNotFoundException e) {
+                        throw Throwables.propagate(e);
+                    }
+                }
+        }),new Function<Pub, String>() {
+            @Override
+            public String apply(Pub pub) {
+                return pub.getName();
+            }
+        });
+    }
 
 	protected Set<File> findDartPackageRoots() throws MojoExecutionException {
 		final Set<File> dartPackageRoots = new HashSet<File>();
