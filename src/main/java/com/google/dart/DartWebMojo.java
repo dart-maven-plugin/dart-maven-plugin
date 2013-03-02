@@ -1,20 +1,25 @@
 package com.google.dart;
 
-import com.google.common.base.Throwables;
-import com.google.dart.util.Pub;
+import java.io.File;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.util.Map;
+import java.util.Set;
+
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.codehaus.plexus.util.FileUtils;
-import org.codehaus.plexus.util.cli.*;
+import org.codehaus.plexus.util.cli.CommandLineException;
+import org.codehaus.plexus.util.cli.CommandLineUtils;
+import org.codehaus.plexus.util.cli.Commandline;
+import org.codehaus.plexus.util.cli.StreamConsumer;
+import org.codehaus.plexus.util.cli.WriterStreamConsumer;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.util.Map;
-import java.util.Set;
+import com.google.common.base.Throwables;
+import com.google.dart.util.Pub;
 
 /**
  * Goal to invoke the dart web compiler.
@@ -74,7 +79,9 @@ public class DartWebMojo extends DartMojo {
         cl.setExecutable(dartPath);
 
 
-        cl.createArg().setValue(ARGUMENT_PACKAGE_PATH + new File(sourceDirectory,packagePath==null?"packages":packagePath).getAbsolutePath() + "/");
+	    if (isPackagePath()) {
+		    cl.createArg().setValue(ARGUMENT_PACKAGE_PATH + getPackagePath().getAbsolutePath());
+	    }
 
 
         File dwc = new File(sourceDirectory, dwcScript);

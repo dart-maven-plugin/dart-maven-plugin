@@ -32,7 +32,6 @@ import org.codehaus.plexus.compiler.util.scan.SourceInclusionScanner;
 import org.codehaus.plexus.compiler.util.scan.StaleSourceScanner;
 import org.codehaus.plexus.compiler.util.scan.mapping.SourceMapping;
 import org.codehaus.plexus.compiler.util.scan.mapping.SuffixMapping;
-import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.cli.Arg;
 import org.codehaus.plexus.util.cli.CommandLineException;
 import org.codehaus.plexus.util.cli.CommandLineUtils;
@@ -110,8 +109,6 @@ public class Dart2JsMojo
 	 */
 	private final static String ARGUMENT_DIAGNOSTIC_COLORS = "--enable-diagnostic-colors";
 
-	private static final String[] EMPTY_STRING_ARRAY = {};
-
 	/**
 	 * Skip the execution of dart2js.
 	 *
@@ -176,14 +173,14 @@ public class Dart2JsMojo
 	 * @since 2.0
 	 */
 	@Parameter(property = "dart.packagepath")
-	private String packagePath;
+	private File packagePath;
 
 	/**
 	 * Force compilation of all files.
 	 *
-	 * @since 1.1
+	 * @since 2.0.2
 	 */
-	@Parameter(defaultValue = "true", property = "dart.force")
+	@Parameter(defaultValue = "false", property = "dart.force")
 	private boolean force;
 
 	/**
@@ -228,7 +225,7 @@ public class Dart2JsMojo
 	/**
 	 * Set this to 'true' to skip running dart's packagemanager pub.
 	 *
-	 * @since 2.0
+	 * @since 2.0.1
 	 */
 	@Parameter(defaultValue = "false", property = "dart.pup.skip")
 	private boolean skipPub;
@@ -376,7 +373,7 @@ public class Dart2JsMojo
 		}
 
 		if (isPackagePath()) {
-			cl.createArg().setValue(ARGUMENT_PACKAGE_PATH + packagePath);
+			cl.createArg().setValue(ARGUMENT_PACKAGE_PATH + packagePath.getAbsolutePath());
 		}
 
 		if (getLog().isDebugEnabled()) {
@@ -426,21 +423,32 @@ public class Dart2JsMojo
 		getLog().info("dart2js for '" + relativePath(dartSourceFile) + "'");
 	}
 
-	private File createOutputFileArgument(final Arg outPutFileArg, final File dartSourceFile) {
+	private File createOutputFileArgument(final Arg outPutFileArg, final File dartSourceFile)
+			throws MojoExecutionException {
 		final String dartSourceFileAbsolutePath = dartSourceFile.getAbsolutePath();
-		final String baseDirAbsolutePath = getBasedir().getAbsolutePath();
-		final String dartSourceFileRelativeToBasedir = dartSourceFileAbsolutePath.replace(baseDirAbsolutePath,
-				"") + ".js";
 
 		String dartOutputFileRelativeToBasedir = null;
-		for (final String compileSourceRoot : getCompileSourceRoots()) {
-
-			if (dartSourceFileAbsolutePath.startsWith(compileSourceRoot)) {
-				dartOutputFileRelativeToBasedir = dartSourceFileAbsolutePath.replace(compileSourceRoot, "");
+		for (final File compileSourceRoot : getCompileSourceRoots()) {
+			final String compileSourceRootAsString = compileSourceRoot.getAbsolutePath();
+			if (dartSourceFileAbsolutePath.startsWith(compileSourceRootAsString)) {
+				dartOutputFileRelativeToBasedir = dartSourceFileAbsolutePath.replace(compileSourceRootAsString, "");
 				dartOutputFileRelativeToBasedir += ".js";
 				break;
 			}
 
+		}
+
+		if (dartOutputFileRelativeToBasedir == null) {
+			getLog().error("Unable to find compilerSourceRoot for dart file '" + dartSourceFileAbsolutePath + "'");
+			getLog().error("compilerSourceRoots are:");
+			for (final File compileSourceRoot : getCompileSourceRoots()) {
+				getLog().error(compileSourceRoot.getAbsolutePath());
+			}
+
+			System.out.println("");
+			System.out.println("");
+
+			throw new MojoExecutionException("There is something wrong. ");
 		}
 
 		final String dartOutputFile = outputDirectory.getAbsolutePath() + dartOutputFileRelativeToBasedir;
@@ -476,9 +484,10 @@ public class Dart2JsMojo
 
 	private File getPackageOutputDirectory(final File packageRoot) {
 		String packageRootOffset = packageRoot.getAbsolutePath();
-		for (final String compileSourceRoot : getCompileSourceRoots()) {
-			if (packageRootOffset.startsWith(compileSourceRoot)) {
-				packageRootOffset = packageRootOffset.replace(compileSourceRoot + "/", "");
+		for (final File compileSourceRoot : getCompileSourceRoots()) {
+			final String compileSourceRootAsString = compileSourceRoot.getAbsolutePath();
+			if (packageRootOffset.startsWith(compileSourceRootAsString)) {
+				packageRootOffset = packageRootOffset.replace(compileSourceRootAsString + "/", "");
 				break;
 			}
 		}
@@ -549,6 +558,6 @@ public class Dart2JsMojo
 	}
 
 	protected boolean isPackagePath() {
-		return !StringUtils.isEmpty(packagePath);
+		return packagePath != null;
 	}
 }

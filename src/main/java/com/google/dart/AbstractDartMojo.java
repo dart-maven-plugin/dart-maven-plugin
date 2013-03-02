@@ -2,6 +2,7 @@ package com.google.dart;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -9,15 +10,9 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
-
-import com.google.common.base.Function;
-import com.google.common.base.Throwables;
-import com.google.common.collect.Collections2;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Maps;
-import com.google.dart.util.Pub;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.DirectoryFileFilter;
 import org.apache.commons.io.filefilter.NameFileFilter;
@@ -25,6 +20,12 @@ import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.codehaus.plexus.util.StringUtils;
+
+import com.google.common.base.Function;
+import com.google.common.base.Throwables;
+import com.google.common.collect.Collections2;
+import com.google.common.collect.Maps;
+import com.google.dart.util.Pub;
 
 public abstract class AbstractDartMojo extends AbstractMojo {
 
@@ -52,7 +53,7 @@ public abstract class AbstractDartMojo extends AbstractMojo {
 	 * @since 1.0
 	 */
 	@Parameter
-	private List<String> compileSourceRoots = new ArrayList<String>();
+	private List<File> compileSourceRoots = new ArrayList<>();
 
 	// ----------------------------------------------------------------------
 	// Read-only parameters
@@ -84,18 +85,9 @@ public abstract class AbstractDartMojo extends AbstractMojo {
 		return basedir;
 	}
 
-	protected List<String> getCompileSourceRoots() {
+	protected List<File> getCompileSourceRoots() {
 		if (compileSourceRoots.isEmpty()) {
-
-			final StringBuilder defaultPath = new StringBuilder(); // /src/main/dart or \src\main\dart
-			defaultPath.append(File.separator);
-			defaultPath.append("src");
-			defaultPath.append(File.separator);
-			defaultPath.append("main");
-			defaultPath.append(File.separator);
-			defaultPath.append("dart");
-
-			return Collections.singletonList(getBasedir() + defaultPath.toString());
+			return Collections.singletonList(new File(getBasedir(), "/src/main/dart"));
 		}
 		return compileSourceRoots;
 	}
@@ -117,40 +109,41 @@ public abstract class AbstractDartMojo extends AbstractMojo {
 		}
 	}
 
-    protected Map<String, Pub> getDartPackagesByName() throws  MojoExecutionException {
-        return Maps.uniqueIndex(
-            Collections2.transform( findDartPackageRoots(), new Function<File, Pub>(){
-                @Override
-                public Pub apply(File file) {
-                    try {
-                        return new Pub( new File(file, "pubspec.yaml"));
-                    } catch (FileNotFoundException e) {
-                        throw Throwables.propagate(e);
-                    }
-                }
-        }),new Function<Pub, String>() {
-            @Override
-            public String apply(Pub pub) {
-                return pub.getName();
-            }
-        });
-    }
+	protected Map<String, Pub> getDartPackagesByName() throws MojoExecutionException {
+		return Maps.uniqueIndex(
+				Collections2.transform(findDartPackageRoots(), new Function<File, Pub>() {
+
+					@Override
+					public Pub apply(File file) {
+						try {
+							return new Pub(new File(file, "pubspec.yaml"));
+						} catch (FileNotFoundException e) {
+							throw Throwables.propagate(e);
+						}
+					}
+				}), new Function<Pub, String>() {
+
+			@Override
+			public String apply(Pub pub) {
+				return pub.getName();
+			}
+		});
+	}
 
 	protected Set<File> findDartPackageRoots() throws MojoExecutionException {
 		final Set<File> dartPackageRoots = new HashSet<File>();
-		for (final String compileSourceRoot : getCompileSourceRoots()) {
-			final File directory = new File(compileSourceRoot);
-			if (!directory.exists()) {
+		for (final File compileSourceRoot : getCompileSourceRoots()) {
+			if (!compileSourceRoot.exists()) {
 				throw new MojoExecutionException("Compiler-source-root '" + compileSourceRoot + "'  does not exist.");
 			}
-			if (!directory.isDirectory()) {
+			if (!compileSourceRoot.isDirectory()) {
 				throw new MojoExecutionException(
 						"Compiler-source-root '" + compileSourceRoot + "'  must be a directory.");
 			}
-			if (!directory.canRead()) {
+			if (!compileSourceRoot.canRead()) {
 				throw new MojoExecutionException("Compiler-source-root '" + compileSourceRoot + "'  must be readable.");
 			}
-			if (!directory.canWrite()) {
+			if (!compileSourceRoot.canWrite()) {
 				throw new MojoExecutionException("Compiler-source-root '" + compileSourceRoot + "'  must be writable.");
 			}
 
@@ -159,7 +152,8 @@ public abstract class AbstractDartMojo extends AbstractMojo {
 			}
 
 			final Collection<File> pubSpecs =
-					FileUtils.listFiles(directory, new NameFileFilter("pubspec.yaml"), DirectoryFileFilter.DIRECTORY);
+					FileUtils.listFiles(compileSourceRoot, new NameFileFilter("pubspec.yaml"),
+							DirectoryFileFilter.DIRECTORY);
 
 			if (getLog().isDebugEnabled()) {
 				getLog().debug("");

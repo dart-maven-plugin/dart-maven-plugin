@@ -85,7 +85,7 @@ public class DartMojo extends PubMojo {
 	 * @since 2.0
 	 */
 	@Parameter(property = "dart.packagepath")
-	protected String packagePath;
+	private File packagePath;
 
 	/**
 	 * enables debugging and listens on specified port for debugger connections
@@ -210,7 +210,7 @@ public class DartMojo extends PubMojo {
 		}
 
 		if (isPackagePath()) {
-			cl.createArg().setValue(ARGUMENT_PACKAGE_PATH + packagePath);
+			cl.createArg().setValue(ARGUMENT_PACKAGE_PATH + packagePath.getAbsolutePath());
 		}
 
 		if (getLog().isDebugEnabled()) {
@@ -232,6 +232,10 @@ public class DartMojo extends PubMojo {
 		return new File(getDartSdk(), "bin/dart" + (OsUtil.isWindows() ? ".bat" : ""));
 	}
 
+	protected File getPackagePath() {
+		return packagePath;
+	}
+
 	@Override
 	public boolean isPubSkipped() {
 		return skipPub;
@@ -250,7 +254,7 @@ public class DartMojo extends PubMojo {
 	}
 
 	protected boolean isPackagePath() {
-		return !StringUtils.isEmpty(packagePath);
+		return packagePath != null;
 	}
 
 	protected boolean isBreakAt() {
