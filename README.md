@@ -18,8 +18,9 @@ The Dart Plugin has one goal (besides the help goal). It is already bound to his
 * `dart:dart` Goal to invoke the dart scripts.
 * `dart:pub` Goal to invoke pub the dart package manager.
 * `dart:dart2js` Goal to compile dart files to javascript.
-* `dart:help` Display help information on dart-maven-plugin. Call mvn dart:help -Ddetail=true -Dgoal=<goal-name> to display parameter details.
+* `dart:dwc` Goal to invoke the dart web compiler.
 * `dart:test` Goal to invoke the dart scripts.
+* `dart:help` Display help information on dart-maven-plugin. Call mvn dart:help -Ddetail=true -Dgoal=<goal-name> to display parameter details.
 
 #Usage
 
