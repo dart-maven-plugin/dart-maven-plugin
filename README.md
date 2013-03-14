@@ -11,6 +11,10 @@ It is possible to overwrite this in the plugin configuration section.
 
 The plugin is released as com.github.dzwicker.dart:dart-maven-plugin
 
+#Requirements
+
+The Dart Maven Plugin needs maven 3.0+ and JDK 7.
+
 #Goals Overview
 
 The Dart Plugin has one goal (besides the help goal). It is already bound to his proper phase within the Maven Lifecycle (compile) and is therefore, automatically executed during his respective phase.

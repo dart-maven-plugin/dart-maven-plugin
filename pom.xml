@@ -57,7 +57,7 @@
     <properties>
         <github.global.server>github</github.global.server>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <mavenVersion>3.0.4</mavenVersion>
+        <mavenVersion>3.0</mavenVersion>
         <java.version>1.7</java.version>
     </properties>
 
