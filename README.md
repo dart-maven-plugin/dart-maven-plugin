@@ -50,3 +50,5 @@ Daniel Zwicker (@dzwicker) founded the project on GitHub.
 * @youngm
 
 * Chris Buckett
+
+* @magnayn
