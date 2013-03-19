@@ -229,7 +229,7 @@ public class DartMojo extends PubMojo {
 	}
 
 	protected File getDartExecutable() {
-		return new File(getDartSdk(), "bin/dart" + (OsUtil.isWindows() ? ".bat" : ""));
+		return new File(getDartSdk(), "bin/dart" + (OsUtil.isWindows() ? ".exe" : ""));
 	}
 
 	protected File getPackagePath() {
