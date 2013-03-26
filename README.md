@@ -1,6 +1,6 @@
 #Maven Dart Plugin
 
-The Dart Maven Plugin provides integration of Dart into a maven build process.
+The Dart Maven Plugin provides integration for Google Dart into a maven build process. It looks for folders with [dart package layout](http://pub.dartlang.org/doc/package-layout.html) 
 
 #Setup
 
