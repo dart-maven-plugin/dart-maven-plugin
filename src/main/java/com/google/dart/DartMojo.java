@@ -149,7 +149,7 @@ public class DartMojo extends PubMojo {
 		if (!script.exists() || !script.isFile()) {
 			throw new IllegalArgumentException("Script must be a file. scripte=" + script.getAbsolutePath());
 		}
-		if (script.canRead()) {
+		if (!script.canRead()) {
 			throw new IllegalArgumentException("Script must be a readable file. scripte=" + script.getAbsolutePath());
 		}
 
