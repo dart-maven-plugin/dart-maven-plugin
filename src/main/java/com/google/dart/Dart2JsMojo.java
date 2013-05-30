@@ -56,7 +56,7 @@ public class Dart2JsMojo
 	 *
 	 * @since 2.0
 	 */
-	private final static String ARGUMENT_CECKED_MODE = "-c";
+	private final static String ARGUMENT_CHECKED_MODE = "-c";
 
 	/**
 	 * Generate the output into <file>
@@ -349,7 +349,7 @@ public class Dart2JsMojo
 		cl.setExecutable(dart2jsPath);
 
 		if (isCheckedMode()) {
-			cl.createArg().setValue(ARGUMENT_CECKED_MODE);
+			cl.createArg().setValue(ARGUMENT_CHECKED_MODE);
 		}
 
 		if (isVerbose()) {
