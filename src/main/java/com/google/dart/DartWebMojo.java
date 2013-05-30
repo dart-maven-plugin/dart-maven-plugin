@@ -26,13 +26,13 @@ import com.google.dart.util.Pub;
  *
  * @author nigel magnay
  */
-@Mojo(name = "dwc", defaultPhase = LifecyclePhase.COMPILE)
+@Mojo(name = "dwc", defaultPhase = LifecyclePhase.GENERATE_SOURCES)
 public class DartWebMojo extends DartMojo {
 
     private final static String ARGUMENT_OUT = "--out";
 
-    @Parameter(property = "output")
-    private String output;
+    @Parameter(property = "output", defaultValue = "${project.build.directory}/generated-sources/dwc")
+    private File outputDir;
 
     @Parameter(property = "htmlFile")
     private String htmlFile;
@@ -87,8 +87,6 @@ public class DartWebMojo extends DartMojo {
         cl.createArg().setValue(dwc.getAbsolutePath());
 
         // Ensure the output location exists.
-
-        File outputDir = new File(sourceDirectory, output);
 
         try {
             FileUtils.deleteDirectory(outputDir);
