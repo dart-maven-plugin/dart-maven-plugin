@@ -78,11 +78,7 @@ public class DartWebMojo extends DartMojo {
         final Commandline cl = new Commandline();
         cl.setExecutable(dartPath);
 
-
-	    if (isPackagePath()) {
-		    cl.createArg().setValue(ARGUMENT_PACKAGE_PATH + getPackagePath().getAbsolutePath());
-	    }
-
+	    cl.createArg().setValue(buildPackagePath());
 
         File dwc = new File(sourceDirectory, dwcScript);
         if( !dwc.exists() )
