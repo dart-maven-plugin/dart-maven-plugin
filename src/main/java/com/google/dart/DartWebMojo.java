@@ -3,7 +3,6 @@ package com.google.dart;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
-import java.util.Map;
 import java.util.Set;
 
 import org.apache.maven.plugin.MojoExecutionException;
@@ -19,7 +18,6 @@ import org.codehaus.plexus.util.cli.StreamConsumer;
 import org.codehaus.plexus.util.cli.WriterStreamConsumer;
 
 import com.google.common.base.Throwables;
-import com.google.dart.util.Pub;
 
 /**
  * Goal to invoke the dart web compiler.
@@ -40,33 +38,11 @@ public class DartWebMojo extends DartMojo {
     @Parameter(property = "dwcScript", defaultValue = "packages/web_ui/dwc.dart")
     private String dwcScript;
 
-    @Parameter(property = "packageName")
-    private String packageName;
-
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
 
         final Set<File> dartPackageRoots = findDartPackageRoots();
         processPubDependencies(dartPackageRoots);
-
-        File sourceDirectory;
-
-        if( packageName != null ) {
-            Map<String, Pub> packages = getDartPackagesByName();
-            Pub pub = packages.get(packageName);
-
-            if( pub == null ) {
-                getLog().info("No package named " + packageName);
-                for( String name : packages.keySet() ) {
-                    getLog().info("  " + name);
-                }
-                throw new MojoFailureException("Missing Package");
-            }
-
-            sourceDirectory = pub.getPath();
-        } else {
-            sourceDirectory = getBasedir();
-        }
 
         checkDart();
         String dartPath = getDartExecutable().getAbsolutePath();
