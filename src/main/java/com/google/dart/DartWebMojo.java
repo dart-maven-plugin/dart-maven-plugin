@@ -32,7 +32,7 @@ public class DartWebMojo extends DartMojo {
     @Parameter(property = "output", defaultValue = "${project.build.directory}/generated-sources/dwc")
     private File outputDir;
 
-    @Parameter(property = "htmlFile")
+    @Parameter(property = "htmlFile", defaultValue = "web/index.html")
     private String htmlFile;
 
     @Parameter(property = "dwcScript", defaultValue = "packages/web_ui/dwc.dart")
