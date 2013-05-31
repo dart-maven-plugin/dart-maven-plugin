@@ -30,7 +30,7 @@ public class DartMojo extends PubMojo {
 	 *
 	 * @since 2.0
 	 */
-	private final static String ARGUMENT_CECKED_MODE = "--checked";
+	private final static String ARGUMENT_CHECKED_MODE = "--checked";
 
 	/**
 	 * Where to find packages, that is, "package:..." imports.
@@ -61,7 +61,7 @@ public class DartMojo extends PubMojo {
 	 *
 	 * @since 2.0
 	 */
-	private final static String ARGUMENT_USE_SCRIPT_SNAPAHOT = "--use_script_snapshot=";
+	private final static String ARGUMENT_USE_SCRIPT_SNAPSHOT = "--use_script_snapshot=";
 
 	/**
 	 * Skip the execution of dart2js.
@@ -194,7 +194,7 @@ public class DartMojo extends PubMojo {
 		cl.setExecutable(dartPath);
 
 		if (isCheckedMode()) {
-			cl.createArg().setValue(ARGUMENT_CECKED_MODE);
+			cl.createArg().setValue(ARGUMENT_CHECKED_MODE);
 		}
 
 		if (isDebug()) {
@@ -206,7 +206,7 @@ public class DartMojo extends PubMojo {
 		}
 
 		if (isUseScriptSnapshot()) {
-			cl.createArg().setValue(ARGUMENT_USE_SCRIPT_SNAPAHOT + useScriptSnapshot);
+			cl.createArg().setValue(ARGUMENT_USE_SCRIPT_SNAPSHOT + useScriptSnapshot);
 		}
 
 		if (isPackagePath()) {
