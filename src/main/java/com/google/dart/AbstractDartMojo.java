@@ -37,6 +37,12 @@ public abstract class AbstractDartMojo extends AbstractMojo {
 	@Parameter(defaultValue = "${basedir}", required = true, readonly = true)
 	private File basedir;
 
+    /**
+     * @since 2.0.5
+     */
+    @Parameter(defaultValue = "src/main/dart", required = true)
+    protected File sourceDirectory;
+
 	/**
 	 * provide a dart-sdk
 	 *
@@ -48,7 +54,7 @@ public abstract class AbstractDartMojo extends AbstractMojo {
 	/**
 	 * The source directories containing the dart sources to be compiled.
 	 * <p/>
-	 * If not specified the default is 'src/main/dart'.
+	 * If not specified the default is 'sourceDirectory'.
 	 *
 	 * @since 1.0
 	 */
@@ -87,7 +93,7 @@ public abstract class AbstractDartMojo extends AbstractMojo {
 
 	protected List<File> getCompileSourceRoots() {
 		if (compileSourceRoots.isEmpty()) {
-			return Collections.singletonList(new File(getBasedir(), "/src/main/dart"));
+			return Collections.singletonList(sourceDirectory);
 		}
 		return compileSourceRoots;
 	}

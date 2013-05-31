@@ -3,7 +3,6 @@ package com.google.dart;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
-import java.util.Map;
 import java.util.Set;
 
 import org.apache.maven.plugin.MojoExecutionException;
@@ -19,54 +18,31 @@ import org.codehaus.plexus.util.cli.StreamConsumer;
 import org.codehaus.plexus.util.cli.WriterStreamConsumer;
 
 import com.google.common.base.Throwables;
-import com.google.dart.util.Pub;
 
 /**
  * Goal to invoke the dart web compiler.
  *
  * @author nigel magnay
  */
-@Mojo(name = "dwc", defaultPhase = LifecyclePhase.COMPILE)
+@Mojo(name = "dwc", defaultPhase = LifecyclePhase.GENERATE_SOURCES)
 public class DartWebMojo extends DartMojo {
 
     private final static String ARGUMENT_OUT = "--out";
 
-    @Parameter(property = "output")
-    private String output;
+    @Parameter(property = "output", defaultValue = "${project.build.directory}/generated-sources/dwc")
+    private File outputDir;
 
-    @Parameter(property = "htmlFile")
+    @Parameter(property = "htmlFile", defaultValue = "web/index.html")
     private String htmlFile;
 
     @Parameter(property = "dwcScript", defaultValue = "packages/web_ui/dwc.dart")
     private String dwcScript;
-
-    @Parameter(property = "packageName")
-    private String packageName;
 
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
 
         final Set<File> dartPackageRoots = findDartPackageRoots();
         processPubDependencies(dartPackageRoots);
-
-        File sourceDirectory;
-
-        if( packageName != null ) {
-            Map<String, Pub> packages = getDartPackagesByName();
-            Pub pub = packages.get(packageName);
-
-            if( pub == null ) {
-                getLog().info("No package named " + packageName);
-                for( String name : packages.keySet() ) {
-                    getLog().info("  " + name);
-                }
-                throw new MojoFailureException("Missing Package");
-            }
-
-            sourceDirectory = pub.getPath();
-        } else {
-            sourceDirectory = getBasedir();
-        }
 
         checkDart();
         String dartPath = getDartExecutable().getAbsolutePath();
@@ -78,11 +54,7 @@ public class DartWebMojo extends DartMojo {
         final Commandline cl = new Commandline();
         cl.setExecutable(dartPath);
 
-
-	    if (isPackagePath()) {
-		    cl.createArg().setValue(ARGUMENT_PACKAGE_PATH + getPackagePath().getAbsolutePath());
-	    }
-
+	    cl.createArg().setValue(buildPackagePath());
 
         File dwc = new File(sourceDirectory, dwcScript);
         if( !dwc.exists() )
@@ -91,8 +63,6 @@ public class DartWebMojo extends DartMojo {
         cl.createArg().setValue(dwc.getAbsolutePath());
 
         // Ensure the output location exists.
-
-        File outputDir = new File(sourceDirectory, output);
 
         try {
             FileUtils.deleteDirectory(outputDir);
