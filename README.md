@@ -1,6 +1,6 @@
 #Maven Dart Plugin
 
-The Dart Maven Plugin provides integration for Google Dart into a maven build process. It looks for folders with [dart package layout](http://pub.dartlang.org/doc/package-layout.html) 
+The Dart Maven Plugin provides integration for Google Dart into a maven build process. It looks for folders with [dart package layout](http://pub.dartlang.org/doc/package-layout.html)
 
 #Setup
 
@@ -43,12 +43,14 @@ An example can be found in the dart-maven-plugin-example folder inside the git r
 The Dart Maven Plugin is deployed to the central repository.
 
 # Authors and Contributors
-Daniel Zwicker (@dzwicker) founded the project on GitHub.
+[Daniel Zwicker]() founded the project on GitHub.
 
-### Comitter
+### Committer
 
-* @youngm
+* [Oliver Lietz](https://github.com/oliverlietz)
 
-* Chris Buckett
+* [@youngm](https://github.com/youngm)
 
-* @magnayn
+* [Chris Buckett](https://github.com/chrisbu)
+
+* [@magnayn](https://github.com/magnayn)
