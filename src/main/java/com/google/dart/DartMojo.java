@@ -84,8 +84,8 @@ public class DartMojo extends PubMojo {
 	 *
 	 * @since 2.0
 	 */
-	@Parameter(property = "dart.packagepath")
-	private File packagePath;
+	@Parameter(defaultValue = "packages", property = "dart.packagePath")
+	private String packagePath;
 
 	/**
 	 * enables debugging and listens on specified port for debugger connections
@@ -209,9 +209,7 @@ public class DartMojo extends PubMojo {
 			cl.createArg().setValue(ARGUMENT_USE_SCRIPT_SNAPSHOT + useScriptSnapshot);
 		}
 
-		if (isPackagePath()) {
-			cl.createArg().setValue(ARGUMENT_PACKAGE_PATH + packagePath.getAbsolutePath());
-		}
+        cl.createArg().setValue(buildPackagePath());
 
 		if (getLog().isDebugEnabled()) {
 			getLog().debug("Base dart command: " + cl.toString());
@@ -232,9 +230,12 @@ public class DartMojo extends PubMojo {
 		return new File(getDartSdk(), "bin/dart" + (OsUtil.isWindows() ? ".exe" : ""));
 	}
 
-	protected File getPackagePath() {
-		return packagePath;
-	}
+    protected String buildPackagePath() {
+        StringBuilder sb = new StringBuilder(ARGUMENT_PACKAGE_PATH);
+        sb.append(new File(sourceDirectory, packagePath).getAbsolutePath());
+        sb.append(File.separator);
+        return sb.toString();
+    }
 
 	@Override
 	public boolean isPubSkipped() {
@@ -251,10 +252,6 @@ public class DartMojo extends PubMojo {
 
 	protected boolean isDebugPort() {
 		return !StringUtils.isEmpty(debugPort);
-	}
-
-	protected boolean isPackagePath() {
-		return packagePath != null;
 	}
 
 	protected boolean isBreakAt() {
