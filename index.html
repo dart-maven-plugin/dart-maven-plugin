@@ -31,24 +31,29 @@
     <!-- MAIN CONTENT -->
     <div id="main_content_wrap" class="outer">
       <section id="main_content" class="inner">
-        <h1>Maven Dart Plugin</h1>
+        <h1>
+<a name="maven-dart-plugin" class="anchor" href="#maven-dart-plugin"><span class="octicon octicon-link"></span></a>Maven Dart Plugin</h1>
 
-<p>The Dart Maven Plugin provides integration for Google Dart into a maven build process. It looks for folders with <a href="http://pub.dartlang.org/doc/package-layout.html">dart package layout</a> </p>
+<p>The Dart Maven Plugin provides integration for Google Dart into a maven build process. It looks for folders with <a href="http://pub.dartlang.org/doc/package-layout.html">dart package layout</a></p>
 
-<h1>Setup</h1>
+<h1>
+<a name="setup" class="anchor" href="#setup"><span class="octicon octicon-link"></span></a>Setup</h1>
 
 <p>The plugin needs a dart-sdk installed on the system it should be executed. By default it will look for the environment variable DART_SDK. So please set this variable.
 It is possible to overwrite this in the plugin configuration section.</p>
 
-<h1>Artifact coordinates</h1>
+<h1>
+<a name="artifact-coordinates" class="anchor" href="#artifact-coordinates"><span class="octicon octicon-link"></span></a>Artifact coordinates</h1>
 
 <p>The plugin is released as com.github.dzwicker.dart:dart-maven-plugin</p>
 
-<h1>Requirements</h1>
+<h1>
+<a name="requirements" class="anchor" href="#requirements"><span class="octicon octicon-link"></span></a>Requirements</h1>
 
 <p>The Dart Maven Plugin needs maven 3.0+ and JDK 7.</p>
 
-<h1>Goals Overview</h1>
+<h1>
+<a name="goals-overview" class="anchor" href="#goals-overview"><span class="octicon octicon-link"></span></a>Goals Overview</h1>
 
 <p>The Dart Plugin has one goal (besides the help goal). It is already bound to his proper phase within the Maven Lifecycle (compile) and is therefore, automatically executed during his respective phase.</p>
 
@@ -65,7 +70,8 @@ It is possible to overwrite this in the plugin configuration section.</p>
 <code>dart:test</code> Goal to invoke the dart scripts.</li>
 <li>
 <code>dart:help</code> Display help information on dart-maven-plugin. Call mvn dart:help -Ddetail=true -Dgoal= to display parameter details.</li>
-</ul><h1>Usage</h1>
+</ul><h1>
+<a name="usage" class="anchor" href="#usage"><span class="octicon octicon-link"></span></a>Usage</h1>
 
 <p>The dart2js goal uses the dart2js compiler from the dart project to compile any dart file to javascript (js file) and a map.js file. It will download the latest dart SDK into the dartOutputDirectory [${project.build.directory}/dependency/dart] for the used OS and architecture. By default it will look for dart files in src/main/dart and will place the javascript files under ${project.build.directory}/dart.</p>
 
@@ -73,24 +79,29 @@ It is possible to overwrite this in the plugin configuration section.</p>
 
 <p>Please use mvn dart:help for more information.</p>
 
-<h1>Example</h1>
+<h1>
+<a name="example" class="anchor" href="#example"><span class="octicon octicon-link"></span></a>Example</h1>
 
 <p>An example can be found in the dart-maven-plugin-example folder inside the git repository.</p>
 
-<h1>Maven repository</h1>
+<h1>
+<a name="maven-repository" class="anchor" href="#maven-repository"><span class="octicon octicon-link"></span></a>Maven repository</h1>
 
 <p>The Dart Maven Plugin is deployed to the central repository.</p>
 
-<h1>Authors and Contributors</h1>
+<h1>
+<a name="authors-and-contributors" class="anchor" href="#authors-and-contributors"><span class="octicon octicon-link"></span></a>Authors and Contributors</h1>
 
-<p>Daniel Zwicker (<a href="https://github.com/dzwicker" class="user-mention">@dzwicker</a>) founded the project on GitHub.</p>
+<p><a href="">Daniel Zwicker</a> founded the project on GitHub.</p>
 
-<h3>Comitter</h3>
+<h3>
+<a name="committer" class="anchor" href="#committer"><span class="octicon octicon-link"></span></a>Committer</h3>
 
 <ul>
-<li><p><a href="https://github.com/youngm" class="user-mention">@youngm</a></p></li>
-<li><p>Chris Buckett</p></li>
-<li><p><a href="https://github.com/magnayn" class="user-mention">@magnayn</a></p></li>
+<li><p><a href="https://github.com/oliverlietz">Oliver Lietz</a></p></li>
+<li><p><a href="https://github.com/youngm">@youngm</a></p></li>
+<li><p><a href="https://github.com/chrisbu">Chris Buckett</a></p></li>
+<li><p><a href="https://github.com/magnayn">@magnayn</a></p></li>
 </ul>
       </section>
     </div>
