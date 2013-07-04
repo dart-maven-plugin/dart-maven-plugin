@@ -54,3 +54,6 @@ The Dart Maven Plugin is deployed to the central repository.
 * [Chris Buckett](https://github.com/chrisbu)
 
 * [@magnayn](https://github.com/magnayn)
+
+* [@mrwonderman](https://github.com/mrwonderman) 
+
