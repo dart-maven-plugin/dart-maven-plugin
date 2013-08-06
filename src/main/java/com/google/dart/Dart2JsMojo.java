@@ -111,7 +111,7 @@ public class Dart2JsMojo
 
     /**
      * Name of the global variable used by dart2js compiler in the generated code.
-     * The name must match the regular expression {@literal \$[a-z]*}.
+     * The name must match the regular expression "\$[a-z]*".
      *
      * @since 2.1.2
      */
