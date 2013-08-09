@@ -19,7 +19,7 @@ echo
 read -p "release:perform finished press [Enter] key to go to nexus:staging-close..."
 echo
 
-mvn -f $script_dir/../pom.xml nexus:staging-close
+mvn -f $script_dir/../pom.xml nexus-staging:close
 echo
 read -p "nexus:staging-close finished press [Enter] key to finish..."
 echo
