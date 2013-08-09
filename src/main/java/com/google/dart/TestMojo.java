@@ -1,11 +1,6 @@
 package com.google.dart;
 
-import java.io.File;
-import java.io.OutputStreamWriter;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
-
+import com.google.common.collect.ImmutableSet;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Mojo;
@@ -18,7 +13,11 @@ import org.codehaus.plexus.util.cli.Commandline;
 import org.codehaus.plexus.util.cli.StreamConsumer;
 import org.codehaus.plexus.util.cli.WriterStreamConsumer;
 
-import com.google.common.collect.ImmutableSet;
+import java.io.File;
+import java.io.OutputStreamWriter;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Goal to invoke the dart tests.
@@ -124,7 +123,7 @@ public class TestMojo extends DartMojo {
 				}
 				if (returnValue != 0 && returnValue != 255) {
 					throw new MojoExecutionException("Test fail returned error code " + returnValue);
-				} else if (returnValue != 255) {
+				} else if (returnValue == 255) {
 					fail = true;
 				}
 
