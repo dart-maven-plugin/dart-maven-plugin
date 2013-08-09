@@ -127,6 +127,7 @@
                     <configuration>
                         <nexusUrl>https://oss.sonatype.org</nexusUrl>
                         <serverId>sonatype-nexus-staging</serverId>
+                        <stagingProfileId>Releases</stagingProfileId>
                     </configuration>
                 </plugin>
             </plugins>
