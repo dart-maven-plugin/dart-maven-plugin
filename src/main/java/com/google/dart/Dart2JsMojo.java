@@ -117,16 +117,6 @@ public class Dart2JsMojo
     private final static String ARGUMENT_GLOBAL_JS_NAME = "--global-js-name=";
 
     /**
-     * Disable dynamic generation of code in the output. Use this option when you want the generated JavaScript
-     * to satisfy CSP restrictions.
-     * <p/>
-     * For more information http://www.html5rocks.com/en/tutorials/security/content-security-policy/.
-     *
-     * @since 2.1.3
-     */
-    private final static String ARGUMENT_DISALLOW_UNSAFE_EVAL = "--disallow-unsafe-eval";
-
-    /**
      * Skip the execution of dart2js.
      *
      * @since 1.1
@@ -256,17 +246,6 @@ public class Dart2JsMojo
     @Parameter(defaultValue = "$", property = "dart.global.js.name")
     private String globalJsName;
 
-    /**
-     * Disable dynamic generation of code in the output. Use this option when you want the generated JavaScript
-     * to satisfy CSP restrictions.
-     * <p/>
-     * For more information http://www.html5rocks.com/en/tutorials/security/content-security-policy/.
-     *
-     * @since 2.1.3
-     */
-    @Parameter(defaultValue = "false", property = "dart.disallow.unsafe.eval")
-    private boolean disallowUnsafeEval;
-
     public void execute()
             throws MojoExecutionException {
         if (isSkipDart2Js()) {
@@ -369,9 +348,8 @@ public class Dart2JsMojo
 
     private Commandline createBaseCommandline() throws MojoExecutionException {
 
-        String dart2jsPath = null;
         checkDart2Js();
-        dart2jsPath = getDart2JsExecutable().getAbsolutePath();
+        String dart2jsPath = getDart2JsExecutable().getAbsolutePath();
 
         if (getLog().isDebugEnabled()) {
             getLog().debug("Using dart2js '" + dart2jsPath + "'.");
@@ -399,10 +377,6 @@ public class Dart2JsMojo
 
         if (isMinify()) {
             cl.createArg().setValue(ARGUMENT_MINIFY);
-        }
-
-        if (isDisallowUnsafeEval()) {
-            cl.createArg().setValue(ARGUMENT_DISALLOW_UNSAFE_EVAL);
         }
 
         if (isSuppressWarnings()) {
@@ -456,7 +430,7 @@ public class Dart2JsMojo
             outputDirectory.mkdirs();
         } else if (!outputDirectory.isDirectory()) {
             throw new MojoExecutionException(
-                    "Fatal error compiling dart to js. Outputdirectory is not a directory");
+                    "Fatal error compiling dart to js. Output directory is not a directory");
         }
     }
 
@@ -586,10 +560,6 @@ public class Dart2JsMojo
 
     protected boolean isMinify() {
         return minify;
-    }
-
-    protected boolean isDisallowUnsafeEval() {
-        return disallowUnsafeEval;
     }
 
     protected boolean isSuppressWarnings() {
