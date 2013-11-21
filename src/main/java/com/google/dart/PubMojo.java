@@ -21,7 +21,7 @@ import java.util.Set;
  *
  * @author Daniel Zwicker
  */
-@Mojo(name = "pub")
+@Mojo(name = "pub", threadSafe = true)
 public class PubMojo extends AbstractDartMojo {
 
     /**

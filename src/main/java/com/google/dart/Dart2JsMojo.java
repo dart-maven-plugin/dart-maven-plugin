@@ -55,7 +55,7 @@ import java.util.concurrent.TimeoutException;
  *
  * @author Daniel Zwicker
  */
-@Mojo(name = "dart2js", defaultPhase = LifecyclePhase.COMPILE)
+@Mojo(name = "dart2js", defaultPhase = LifecyclePhase.COMPILE, threadSafe = true)
 public class Dart2JsMojo
     extends PubMojo {
 
