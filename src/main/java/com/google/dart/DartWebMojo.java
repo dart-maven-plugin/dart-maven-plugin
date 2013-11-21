@@ -1,10 +1,6 @@
 package com.google.dart;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.util.Set;
-
+import com.google.common.base.Throwables;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
@@ -17,14 +13,17 @@ import org.codehaus.plexus.util.cli.Commandline;
 import org.codehaus.plexus.util.cli.StreamConsumer;
 import org.codehaus.plexus.util.cli.WriterStreamConsumer;
 
-import com.google.common.base.Throwables;
+import java.io.File;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.util.Set;
 
 /**
  * Goal to invoke the dart web compiler.
  *
  * @author nigel magnay
  */
-@Mojo(name = "dwc", defaultPhase = LifecyclePhase.GENERATE_SOURCES)
+@Mojo(name = "dwc", defaultPhase = LifecyclePhase.GENERATE_SOURCES, threadSafe = true)
 public class DartWebMojo extends DartMojo {
 
     private final static String ARGUMENT_OUT = "--out";
@@ -54,10 +53,10 @@ public class DartWebMojo extends DartMojo {
         final Commandline cl = new Commandline();
         cl.setExecutable(dartPath);
 
-	    cl.createArg().setValue(buildPackagePath());
+        cl.createArg().setValue(buildPackagePath());
 
         File dwc = new File(sourceDirectory, dwcScript);
-        if( !dwc.exists() )
+        if (!dwc.exists())
             throw new MojoExecutionException("The dwc script does not exist here: " + dwc.getAbsolutePath());
 
         cl.createArg().setValue(dwc.getAbsolutePath());
@@ -78,10 +77,9 @@ public class DartWebMojo extends DartMojo {
 
         // Root HTML:
         File html = new File(sourceDirectory, htmlFile);
-        if( !html.exists() )
+        if (!html.exists())
             throw new MojoExecutionException("The HTML file does not exist here: " + html.getAbsolutePath());
         cl.createArg().setValue(html.getAbsolutePath());
-
 
 
         final StreamConsumer output = new WriterStreamConsumer(new OutputStreamWriter(System.out));
