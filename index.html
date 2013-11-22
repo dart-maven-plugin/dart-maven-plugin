@@ -37,6 +37,18 @@
 <p>The Dart Maven Plugin provides integration for Google Dart into a maven build process. It looks for folders with <a href="http://pub.dartlang.org/doc/package-layout.html">dart package layout</a></p>
 
 <h1>
+<a name="changenotes" class="anchor" href="#changenotes"><span class="octicon octicon-link"></span></a>Changenotes</h1>
+
+<h3>
+<a name="300" class="anchor" href="#300"><span class="octicon octicon-link"></span></a>3.0.0</h3>
+
+<ul>
+<li>
+<code>dart:dart2js</code>  Has now the possibility to span mutliple compiler sessions in parallel with <code>threadCount</code> </li>
+<li>
+<code>dart:pub</code>      Is now full flexible by providing <code>pubCommand</code> e.g. <code>get</code> and a list of <code>pubOptions</code> e.g. <code>--no-offline</code>
+</li>
+</ul><h1>
 <a name="setup" class="anchor" href="#setup"><span class="octicon octicon-link"></span></a>Setup</h1>
 
 <p>The plugin needs a dart-sdk installed on the system it should be executed. By default it will look for the environment variable DART_SDK. So please set this variable.
