@@ -410,21 +410,26 @@ public class Dart2JsMojo
             final List<String> messages = future.get(0, TimeUnit.MILLISECONDS);
             for (final String logMessage : messages) {
                 final String[] m = logMessage.split("#");
-                final String level = m[0];
-                final String message = m[1];
-                switch (level) {
-                    case "debug":
-                        getLog().debug(message);
-                        break;
-                    case "info":
-                        getLog().info(message);
-                        break;
-                    case "warn":
-                        getLog().warn(message);
-                        break;
-                    case "error":
-                        getLog().error(message);
-                        break;
+                if (m.length > 1) {
+                    final String level = m[0];
+                    final String message = m[1];
+                    switch (level) {
+                        case "debug":
+                            getLog().debug(message);
+                            break;
+                        case "info":
+                            getLog().info(message);
+                            break;
+                        case "warn":
+                            getLog().warn(message);
+                            break;
+                        case "error":
+                            getLog().error(message);
+                            break;
+                    }
+                } else {
+                    // defaults to info
+                    getLog().info(logMessage);
                 }
             }
         }
