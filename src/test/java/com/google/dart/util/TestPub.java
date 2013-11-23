@@ -11,7 +11,7 @@ public class TestPub {
 
     @Test
     public void testReadYamlFile() throws FileNotFoundException {
-        Pub thePub = new Pub( new File(getClass().getResource("pubspec.yaml").getFile()));
+        Pub thePub = new Pub(new File(getClass().getResource("pubspec.yaml").getFile()));
         Assert.assertEquals(thePub.getName(), "darterop");
     }
 
