@@ -268,7 +268,7 @@ public class Dart2JsMojo
      *
      * @since 3.0.0
      */
-    @Parameter(defaultValue = "60000", property = "dart.thread.timeout")
+    @Parameter(defaultValue = "0", property = "dart.thread.timeout")
     private int timeout;
 
     public void execute()
@@ -389,7 +389,7 @@ public class Dart2JsMojo
 
             executor.shutdown();
             try {
-                if(timeout > 0) {
+                if (timeout > 0) {
                     executor.awaitTermination(timeout, TimeUnit.MILLISECONDS);
                 }
 
