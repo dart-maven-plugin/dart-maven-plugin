@@ -389,7 +389,9 @@ public class Dart2JsMojo
 
             executor.shutdown();
             try {
-                executor.awaitTermination(timeout, TimeUnit.MILLISECONDS);
+                if(timeout > 0) {
+                    executor.awaitTermination(timeout, TimeUnit.MILLISECONDS);
+                }
 
                 logResults(logging);
                 getLog().info(
