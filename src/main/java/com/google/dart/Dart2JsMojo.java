@@ -398,8 +398,10 @@ public class Dart2JsMojo
                     "Compiling " + staleDartSources.size() + " dart file" + (staleDartSources.size() == 1 ? ""
                         : "s")
                         + " to " + outputDirectory.getAbsolutePath());
-            } catch (InterruptedException | ExecutionException | TimeoutException e) {
-                throw new MojoExecutionException("Unable to compile al dart files with in " + timeout + "ms. Perhaps increase it.");
+            } catch (InterruptedException | TimeoutException e) {
+                throw new MojoExecutionException("Unable to compile al dart files with in " + timeout + "ms. Perhaps increase it.", e);
+            } catch (ExecutionException e) {
+                throw new MojoExecutionException("Unable to compile al dart files.", e);
             }
         }
 
