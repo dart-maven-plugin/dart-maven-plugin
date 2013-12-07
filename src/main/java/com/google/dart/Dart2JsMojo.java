@@ -389,19 +389,15 @@ public class Dart2JsMojo
 
             executor.shutdown();
             try {
-                if (timeout > 0) {
-                    executor.awaitTermination(timeout, TimeUnit.MILLISECONDS);
-                }
-
                 logResults(logging);
                 getLog().info(
                     "Compiling " + staleDartSources.size() + " dart file" + (staleDartSources.size() == 1 ? ""
                         : "s")
                         + " to " + outputDirectory.getAbsolutePath());
             } catch (InterruptedException | TimeoutException e) {
-                throw new MojoExecutionException("Unable to compile al dart files with in " + timeout + "ms. Perhaps increase it.", e);
+                throw new MojoExecutionException("Unable to compile all dart files within " + timeout + "ms. Perhaps increase it.", e);
             } catch (ExecutionException e) {
-                throw new MojoExecutionException("Unable to compile al dart files.", e);
+                throw new MojoExecutionException("Unable to compile all dart files.", e);
             }
         }
 
@@ -411,7 +407,12 @@ public class Dart2JsMojo
 
     private void logResults(List<Future<List<String>>> logging) throws InterruptedException, ExecutionException, TimeoutException {
         for (final Future<List<String>> future : logging) {
-            final List<String> messages = future.get(0, TimeUnit.MILLISECONDS);
+            List<String> messages;
+            if (timeout > 0) {
+                messages = future.get(timeout, TimeUnit.MILLISECONDS);
+            } else {
+                messages = future.get();
+            }
             for (final String logMessage : messages) {
                 final String[] m = logMessage.split("#");
                 if (m.length > 1) {
