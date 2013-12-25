@@ -370,7 +370,8 @@ public class Dart2JsMojo
                                     messages.add("debug#dart2js return code: " + returnValue);
                                 }
                                 if (returnValue != 0) {
-                                    throw new MojoExecutionException("Dart2Js returned error code " + returnValue);
+                                    throw new MojoExecutionException(null, "Dart2Js returned error code " + returnValue,
+                                    		stringBuilder.toString());
                                 }
 
                                 System.out.println();
