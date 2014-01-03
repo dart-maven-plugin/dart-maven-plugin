@@ -111,6 +111,13 @@ public class Dart2JsMojo
     private final static String ARGUMENT_SUPPRESS_WARNINGS = "--suppress-warnings";
 
     /**
+     * Do not display any hints.
+     *
+     * @since 3.0.6
+     */
+    private final static String ARGUMENT_SUPPRESS_HINTS = "--suppress-hints";
+
+    /**
      * Add colors to diagnostic messages.
      *
      * @since 1.0.3
@@ -174,6 +181,15 @@ public class Dart2JsMojo
      */
     @Parameter(defaultValue = "false", property = "dart.suppressWarnings")
     private boolean suppressWarnings;
+
+
+    /**
+     * Do not display any hints.
+     *
+     * @since 3.0.6
+     */
+    @Parameter(defaultValue = "false", property = "dart.suppressHints")
+    private boolean suppressHints;
 
     /**
      * Add colors to diagnostic messages.
@@ -473,6 +489,10 @@ public class Dart2JsMojo
             cl.createArg().setValue(ARGUMENT_SUPPRESS_WARNINGS);
         }
 
+        if (isSuppressHints()) {
+            cl.createArg().setValue(ARGUMENT_SUPPRESS_HINTS);
+        }
+
         if (isDiagnosticColors()) {
             cl.createArg().setValue(ARGUMENT_DIAGNOSTIC_COLORS);
         }
@@ -653,6 +673,10 @@ public class Dart2JsMojo
 
     protected boolean isSuppressWarnings() {
         return suppressWarnings;
+    }
+
+    protected boolean isSuppressHints() {
+      return suppressHints;
     }
 
     protected boolean isDiagnosticColors() {
