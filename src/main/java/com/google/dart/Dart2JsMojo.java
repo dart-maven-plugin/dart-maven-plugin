@@ -125,14 +125,6 @@ public class Dart2JsMojo
     private final static String ARGUMENT_DIAGNOSTIC_COLORS = "--enable-diagnostic-colors";
 
     /**
-     * Name of the global variable used by dart2js compiler in the generated code.
-     * The name must match the regular expression "\$[a-z]*".
-     *
-     * @since 2.1.2
-     */
-    private final static String ARGUMENT_GLOBAL_JS_NAME = "--global-js-name=";
-
-    /**
      * Skip the execution of dart2js.
      *
      * @since 1.1
@@ -261,15 +253,6 @@ public class Dart2JsMojo
      */
     @Parameter(defaultValue = "false", property = "dart.pup.skip")
     private boolean skipPub;
-
-    /**
-     * Name of the global variable used by dart2js compiler in the generated code.
-     * The name must match the regular expression "\$[a-z]*".
-     *
-     * @since 2.1.2
-     */
-    @Parameter(defaultValue = "$", property = "dart.global.js.name")
-    private String globalJsName;
 
     /**
      * The number of threads used to span dart2js instances.
@@ -500,8 +483,6 @@ public class Dart2JsMojo
         if (isPackagePath()) {
             cl.createArg().setValue(ARGUMENT_PACKAGE_PATH + packagePath.getAbsolutePath());
         }
-
-        cl.createArg().setValue(ARGUMENT_GLOBAL_JS_NAME + globalJsName);
 
         if (getLog().isDebugEnabled()) {
             messages.add("debug#Base dart2js command: " + cl.toString());
