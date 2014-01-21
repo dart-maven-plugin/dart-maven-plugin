@@ -265,10 +265,11 @@ public class Dart2JsMojo
     /**
      * Name of the global variable used by dart2js compiler in the generated code.
      * The name must match the regular expression "\$[a-z]*".
+     * Only available in dart2js < 1.1.
      *
      * @since 2.1.2
      */
-    @Parameter(defaultValue = "$", property = "dart.global.js.name")
+    @Parameter(property = "dart.global.js.name")
     private String globalJsName;
 
     /**
@@ -387,7 +388,7 @@ public class Dart2JsMojo
                                 }
                                 if (returnValue != 0) {
                                     throw new MojoExecutionException(null, "Dart2Js returned error code " + returnValue,
-                                    		stringBuilder.toString());
+                                        stringBuilder.toString());
                                 }
 
                                 System.out.println();
@@ -501,7 +502,9 @@ public class Dart2JsMojo
             cl.createArg().setValue(ARGUMENT_PACKAGE_PATH + packagePath.getAbsolutePath());
         }
 
-        cl.createArg().setValue(ARGUMENT_GLOBAL_JS_NAME + globalJsName);
+        if (isGlobalJs()) {
+            cl.createArg().setValue(ARGUMENT_GLOBAL_JS_NAME + globalJsName);
+        }
 
         if (getLog().isDebugEnabled()) {
             messages.add("debug#Base dart2js command: " + cl.toString());
@@ -676,7 +679,7 @@ public class Dart2JsMojo
     }
 
     protected boolean isSuppressHints() {
-      return suppressHints;
+        return suppressHints;
     }
 
     protected boolean isDiagnosticColors() {
@@ -689,5 +692,9 @@ public class Dart2JsMojo
 
     protected boolean isPackagePath() {
         return packagePath != null;
+    }
+
+    protected boolean isGlobalJs() {
+        return globalJsName != null;
     }
 }
