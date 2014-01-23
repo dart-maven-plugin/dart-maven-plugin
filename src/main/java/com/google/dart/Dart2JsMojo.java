@@ -133,6 +133,13 @@ public class Dart2JsMojo
     private final static String ARGUMENT_GLOBAL_JS_NAME = "--global-js-name=";
 
     /**
+     * The default category is Client, which tells dart2js to expect a web app.
+     * 
+     * @since 3.0.8
+     */
+    private final static String ARGUMENT_CATEGORIES = "--categories=";
+    
+    /**
      * Skip the execution of dart2js.
      *
      * @since 1.1
@@ -272,6 +279,15 @@ public class Dart2JsMojo
     @Parameter(property = "dart.global.js.name")
     private String globalJsName;
 
+    /**
+     * Use with --analyze-only to analyze a command-line app. 
+     * The default category is Client, which tells dart2js to expect a web app.
+     *
+     * @since 3.0.8
+     */
+    @Parameter(property = "dart.categories")
+    private String categories;
+    
     /**
      * The number of threads used to span dart2js instances.
      *
@@ -506,6 +522,10 @@ public class Dart2JsMojo
             cl.createArg().setValue(ARGUMENT_GLOBAL_JS_NAME + globalJsName);
         }
 
+        if (isCategories()) {
+            cl.createArg().setValue(ARGUMENT_CATEGORIES + categories);
+        }
+        
         if (getLog().isDebugEnabled()) {
             messages.add("debug#Base dart2js command: " + cl.toString());
         }
@@ -697,4 +717,9 @@ public class Dart2JsMojo
     protected boolean isGlobalJs() {
         return globalJsName != null;
     }
+    
+    protected boolean isCategories() {
+        return categories != null;
+    }
+    
 }
