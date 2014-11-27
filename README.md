@@ -63,3 +63,7 @@ The Dart Maven Plugin is deployed to the central repository.
 
 * [@mrwonderman](https://github.com/mrwonderman) 
 
+
+
+[![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/dart-maven-plugin/dart-maven-plugin/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
+
