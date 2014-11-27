@@ -1,5 +1,7 @@
 #Maven Dart Plugin
 
+[![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/dart-maven-plugin/dart-maven-plugin/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
+
 The Dart Maven Plugin provides integration for Google Dart into a maven build process. It looks for folders with [dart package layout](http://pub.dartlang.org/doc/package-layout.html)
 
 #Changenotes
@@ -62,8 +64,3 @@ The Dart Maven Plugin is deployed to the central repository.
 * [@magnayn](https://github.com/magnayn)
 
 * [@mrwonderman](https://github.com/mrwonderman) 
-
-
-
-[![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/dart-maven-plugin/dart-maven-plugin/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
-
