@@ -18,6 +18,6 @@ class footer {
 }
 
 main() {
-  var footer = new footer();
-  footer.load();
+  var f = new footer();
+  f.load();
 }
