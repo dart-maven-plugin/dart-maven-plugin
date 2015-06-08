@@ -51,6 +51,7 @@
                 <configuration>
                     <checkedMode>true</checkedMode>
                     <dartSdk>${dart.sdk}</dartSdk>
+                    <testFailureIgnore>false</testFailureIgnore>
                 </configuration>
                 <executions>
                     <execution>
