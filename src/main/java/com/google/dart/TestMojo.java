@@ -92,7 +92,7 @@ public class TestMojo extends DartMojo {
 
         final Commandline cl = createBaseCommandline();
 
-        final Arg scriptArg = cl.createArg(true);
+        final Arg scriptArg = cl.createArg(false);
 
         final StreamConsumer output = new WriterStreamConsumer(new OutputStreamWriter(System.out));
         final StreamConsumer error = new WriterStreamConsumer(new OutputStreamWriter(System.err));
