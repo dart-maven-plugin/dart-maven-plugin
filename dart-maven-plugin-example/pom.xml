@@ -7,6 +7,10 @@
     <packaging>war</packaging>
     <version>0.0.1-SNAPSHOT</version>
 
+    <properties>
+        <dart.sdk>/Users/daniel/in2Experience/dart/dart-sdk</dart.sdk>
+    </properties>
+
     <distributionManagement>
         <repository>
             <id>in2ex-releases</id>
@@ -37,15 +41,17 @@
                             <directory>target/dart</directory>
                         </resource>
                     </webResources>
+                    <failOnMissingWebXml>false</failOnMissingWebXml>
                 </configuration>
             </plugin>
             <plugin>
                 <groupId>com.github.dzwicker.dart</groupId>
                 <artifactId>dart-maven-plugin</artifactId>
-                <version>2.0.2-SNAPSHOT</version>
+                <version>3.0.9-SNAPSHOT</version>
                 <configuration>
                     <checkedMode>true</checkedMode>
-                    <dartSdk>/Users/daniel/in2Experience/dart/dart-sdk</dartSdk>
+                    <dartSdk>${dart.sdk}</dartSdk>
+                    <testFailureIgnore>false</testFailureIgnore>
                 </configuration>
                 <executions>
                     <execution>
