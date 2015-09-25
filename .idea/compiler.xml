@@ -13,13 +13,19 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <processorPath useClasspath="true" />
-        <module name="dart-maven-plugin" />
         <module name="dart-maven-plugin-example" />
+      </profile>
+      <profile default="false" name="Annotation profile for dart-maven-plugin" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <processorPath useClasspath="true" />
+        <module name="dart-maven-plugin" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
       <module name="dart-maven-plugin" target="1.7" />
+      <module name="dart-maven-plugin-example" target="1.5" />
     </bytecodeTargetLevel>
   </component>
 </project>
-
