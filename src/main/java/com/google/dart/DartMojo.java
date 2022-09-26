@@ -14,6 +14,7 @@ import org.codehaus.plexus.util.cli.WriterStreamConsumer;
 
 import java.io.File;
 import java.io.OutputStreamWriter;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -130,6 +131,17 @@ public class DartMojo extends PubMojo {
     @Parameter(defaultValue = "false", property = "dart.pup.skip")
     private boolean skipPub;
 
+    @Parameter(
+            property = "customPackagePath",
+            defaultValue = "false"
+    )
+    private boolean customPackageRoot;
+
+    @Parameter(
+            property = "arguments"
+    )
+    private List<String> arguments;
+
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
 
@@ -149,10 +161,16 @@ public class DartMojo extends PubMojo {
             throw new IllegalArgumentException("Script must be a file. scripte=" + script.getAbsolutePath());
         }
         if (!script.canRead()) {
-            throw new IllegalArgumentException("Script must be a readable file. scripte=" + script.getAbsolutePath());
+            throw new IllegalArgumentException("Script must be a readable file. script=" + script.getAbsolutePath());
         }
 
         cl.createArg(true).setValue(script.getAbsolutePath());
+        if (!this.arguments.isEmpty()) {
+
+            for (String arg : this.arguments) {
+                cl.createArg().setValue(arg);
+            }
+        }
 
         final StreamConsumer output = new WriterStreamConsumer(new OutputStreamWriter(System.out));
         final StreamConsumer error = new WriterStreamConsumer(new OutputStreamWriter(System.err));
@@ -208,7 +226,9 @@ public class DartMojo extends PubMojo {
             cl.createArg().setValue(ARGUMENT_USE_SCRIPT_SNAPSHOT + useScriptSnapshot);
         }
 
-        cl.createArg().setValue(buildPackagePath());
+        if (this.customPackageRoot) {
+            cl.createArg().setValue(this.buildPackagePath());
+        };
 
         if (getLog().isDebugEnabled()) {
             getLog().debug("Base dart command: " + cl.toString());
