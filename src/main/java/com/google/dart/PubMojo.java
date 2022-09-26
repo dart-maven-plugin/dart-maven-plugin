@@ -54,10 +54,10 @@ public class PubMojo extends AbstractDartMojo {
         }
         String pubPath;
         checkPub();
-        pubPath = getPubExecutable().getAbsolutePath();
+        pubPath = getDartExecutable().getAbsolutePath();
 
         if (getLog().isDebugEnabled()) {
-            getLog().debug("Using pub '" + pubPath + "'.");
+            getLog().debug("Using dart '" + pubPath + "'.");
             getLog().debug("basedir: " + getBasedir());
         }
 
@@ -67,6 +67,7 @@ public class PubMojo extends AbstractDartMojo {
         final Commandline cl = new Commandline();
         cl.setExecutable(pubPath);
 
+        cl.createArg().setValue("pub");
         cl.createArg().setValue(pubCommand);
 
         if (pubOptions != null) {
@@ -107,14 +108,14 @@ public class PubMojo extends AbstractDartMojo {
 
     protected void checkPub() throws MojoExecutionException {
         checkDartSdk();
-        if (!getPubExecutable().canExecute()) {
+        if (!getDartExecutable().canExecute()) {
             throw new MojoExecutionException("Pub not executable! Configuration error for dartSdk? dartSdk="
                 + getDartSdk().getAbsolutePath());
         }
     }
 
-    private File getPubExecutable() {
-        return new File(getDartSdk(), "bin/pub" + (OsUtil.isWindows() ? ".bat" : ""));
+    private File getDartExecutable() {
+        return new File(getDartSdk(), "bin/dart" + (OsUtil.isWindows() ? ".exe" : ""));
     }
 
     public boolean isPubSkipped() {
